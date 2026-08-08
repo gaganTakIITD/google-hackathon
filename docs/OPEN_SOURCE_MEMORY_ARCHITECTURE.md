@@ -1603,3 +1603,4 @@ When architecture decisions change:
 | 2026-08-08 | Locked workstream identity resolver + Anchor promotion signal catalog in `docs/WORKSTREAM_AND_PROMOTION_V1.md` (research-informed). |
 | 2026-08-08 | Locked parallel compose operators + IDE hook event mapping in `docs/PARALLEL_COMPOSE_AND_HOOKS_V1.md`. |
 | 2026-08-08 | Deep-read research pass: agent-memory corpus, sealed-pack crypto, shareable-anchor privacy (`docs/research/`); locked `.mxp` + shareable policy in `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md`. |
+| 2026-08-08 | Pillar deep-read campaign for implementation clarity: `IMPLEMENTATION_FROM_LITERATURE.md` + `research/impl/P1–P6` (MemoryOS/MIRIX/MemOS/Graphiti/Mem0/…); ~783-ID survey seed inventoried for continued FULL expansion. |
