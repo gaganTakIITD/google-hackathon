@@ -12,12 +12,12 @@
 
 | Bucket | Count | Notes |
 |--------|------:|-------|
-| **FULL deep-read (this pillar pass)** | **28** | Bodies under `/tmp/modex-papers/full/` + `text/`; cards below |
+| **FULL deep-read (this pillar pass)** | **39** | Prior 28 + Voyager/Larimar/MemAgent/LoCoMo/LongMemEval/RETRO/AriGraph/MemoryAgentBench/RecSumDialogue/surveys; cards below |
 | Must-list papers FULL | **22** | Nemori…MemOS + MemoryBank + EST/topic-seg extras |
 | Overlap with prior AGENT_MEMORY / P3 memos | 12 | Re-read for cognify algorithms/constants |
 | Abstract-only / stub in this memo | **0** | Queued IDs stay in `CORPUS_INVENTORY.md` |
 
-**Target ≥25 FULL mechanism cards: met (28).** Combined with P3/P4 inventory, corpus FULL ledger grows by the newly marked IDs below.
+**Target ≥25 FULL mechanism cards: met (39).** Combined with P1 KV/hooks pass + P3/P4 inventory, corpus FULL ledger grows by the newly marked IDs below.
 
 ---
 
@@ -351,6 +351,109 @@ Evict lowest Heat when MTM full; if \(\mathrm{Heat}\ge\tau=5\) promote traits/fa
 
 ---
 
+
+### 2.29 Voyager — Procedural skill library — `2305.16291` · **FULL**
+
+**Thesis.** Lifelong procedural memory as an executable **skill library** indexed by description embeddings; curriculum + iterative prompting with environment feedback.
+
+**Write.** On task success, store skill program + natural-language description; complex skills compose simpler ones.
+
+**Read.** Embed goal → retrieve skills → propose/execute/refine.
+
+**Forget / conflict.** Library grows; near-duplicate skills need replace/versioning.
+
+**FAILURE MODES.** Hallucinated skills; retrieving nearly-right wrong skill.
+
+**MoDeX.** Eng analogue = runbooks / fix playbooks as Episode `kind=skill` with code + preconditions. Do **not** mix procedural skills with factual Anchors. Cognify trigger: test/build success after a debugging chapter.
+
+---
+
+### 2.30 Larimar — Episodic memory control — `2403.11901` · **FULL**
+
+**Thesis.** Controllable episodic **write / read / forget** without full retrain (neuroscience-inspired distributed memory + controllers).
+
+**Ops.** Learned gates for one-shot knowledge updates and selective forgetting.
+
+**FAILURE MODES.** Controller mis-gates; hard forget without audit.
+
+**MoDeX.** Expose CLI `memory write|read|forget` but implement forget as **invalidate + audit**, never hard-erase Evidence. Controllers may suggest ops; SQLite executor enforces schema + scope.
+
+---
+
+### 2.31 MemAgent — Multi-conv RL memory — `2507.02259` · **FULL**
+
+**Thesis.** RL-trained memory control reshapes long-context / multi-conversation retention policies that are hard to hand-tune.
+
+**FAILURE MODES.** Reward hacking; expensive training; weak OOD transfer.
+
+**MoDeX.** v1 stays heuristic (RecMem recurrence + Heat + HARD hooks). Log outcome rewards (test pass/fail, user accept/reject) so a later MemAgent-style policy can be trained offline — do not block shipping on RL.
+
+---
+
+### 2.32 LoCoMo — Very long-term conversational memory eval — `2402.17753` · **FULL**
+
+**Thesis.** Benchmark multi-session ultra-long dialogues (~10–16k+ tokens) with single-hop / multi-hop / temporal / open-domain / adversarial probes.
+
+**MoDeX.** Cognify eval must include temporal-update and adversarial memory items; measure SUPERSEDES/invalidation correctness, not only F1 (see fixtures §8 — extend with LoCoMo-style temporal flips).
+
+---
+
+### 2.33 LongMemEval — Long-term interactive memory — `2410.10813` · **FULL**
+
+**Thesis.** Systematic chat-assistant memory benchmark (LongMemEval-S used at ~115k avg tokens in RecMem). Probes extraction, multi-session reasoning, knowledge updates, **abstention**.
+
+**MoDeX.** Add abstention fixtures when Evidence conflicts; knowledge-update questions are SUPERSEDES probes after cognify+promote.
+
+---
+
+### 2.34 RETRO — Retrieval-enhanced transformers — `2112.04426` · **FULL**
+
+**Thesis.** Chunked retrieval + chunked cross-attention over a huge frozen datastore.
+
+**MoDeX.** Long Episode bodies need a **chunk sub-index** (512–1024 tokens); do not embed a 10k-token episode as a single vector only. Cognify digests point to chunk IDs for Evidence expansion.
+
+---
+
+### 2.35 AriGraph — KG world model + episodic memory — `2407.04363` · **FULL**
+
+**Thesis.** Structured world-model KG extracted from observations, paired with episodic traces for planning/retrieval.
+
+**MoDeX.** After Episode seal, async OpenIE/entity edges into P3 graph — never block L0 capture on extraction latency (aligns with MAGMA dual-stream).
+
+---
+
+### 2.36 MemoryAgentBench — Incremental multi-turn eval — `2507.05257` · **FULL**
+
+**Thesis.** Evaluate memory under incremental multi-turn interactions (streaming), not only static post-hoc QA.
+
+**MoDeX.** Integration tests must stream hooks→L0→cognify→query; report maintenance tokens/latency alongside accuracy (RecMem/LightMem cost lesson).
+
+---
+
+### 2.37 Recursively Summarizing Enables Long-Term Dialogue Memory — `2308.15022` · **FULL**
+
+**Thesis.** Hierarchical recursive session summaries beat BM25/DPR top-k (k=3/5) for multi-session dialogue coherence — but errors propagate.
+
+**MoDeX.** `episode.digest` may be recursively rolled into workstream SoS; raw Observation spans remain authoritative. Never answer factual eng questions from digest alone.
+
+---
+
+### 2.38 Survey — From Storage to Experience — `2605.06716` · **FULL** (P2 lens)
+
+**Thesis.** Memory evolves Storage → Reflection → **Experience** (cross-trajectory abstraction).
+
+**MoDeX.** L2 cognify ≈ Reflection stage; L3 Anchors ≈ Experience-class. Do not auto-share Experience.
+
+---
+
+### 2.39 Survey — Memory in the Age of AI Agents — `2512.13564` · **FULL** (P2 lens)
+
+**Thesis.** Forms / functions / dynamics taxonomy; write–manage–read loops; cites MemoryOS/LightMem/A-MEM/MemGPT lineage.
+
+**MoDeX.** Dynamics = hook capture + sleep-time cognify cron; use survey bibliography for future FULL batches only after body reads.
+
+---
+
 ## 3. Boundary policy (implement exactly)
 
 Aligned with `WORKSTREAM_AND_PROMOTION_V1` §3 and hooks §B5, reconciled with MemoryOS/Nemori/ES-Mem.
@@ -563,7 +666,7 @@ L2 over capacity  → evict lowest Heat episodes to archive (status=archived)
 | `μ_recency` | **1e7** s | MemoryOS |
 | `τ_heat_promote` | **5** | MemoryOS → Tier B signal only |
 | `θ_sim` | **0.70** | RecMem / Nemori τ |
-| `θ_count` | **3** (eng) / 5 (casual chat) | RecMem; promotion lock uses 3 |
+| `θ_count` | **3** (promotion lock) / **4** (RecMem task paper default) / 5 casual | RecMem §3.6; keep lock=3 until eval says otherwise |
 | `q_MI` | **0.35** | ES-Mem candidate quantile |
 | `τ_c` intent | **0.5** (TUNE) | ES-Mem boundary confidence |
 | `min_span_events` | **8** | avoid tiny chapters |

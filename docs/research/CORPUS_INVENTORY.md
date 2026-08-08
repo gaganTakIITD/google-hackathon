@@ -33,7 +33,8 @@ What we *can* and *did* do:
 | `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md` | MemoryOS, LightMem, MAGMA, Memory-R1, ConfAIde, Fides, LoCoMo, MemoryAgentBench, AriGraph, Reflexion, Voyager |
 | `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH3.md` | **15 new FULL + 3 re-read extras:** LTM Self-Evolution, LLM-Agents §memory, Memento, MemoryBench, ReasoningBank, MEM1, LEGOMem, MemAct, O-Mem, Agent KB, H-Mem, MemoChat, DialSim, Memory-as-a-Tool, Sleep-SCM (+ MemoryBank/SCM/TiM extras) |
 | `IMPLEMENTATION_FROM_LITERATURE.md` | Cross-pillar Phase A–E algorithms/constants |
-| `impl/P2_EPISODE_COGNIFY.md` | **P2 impl (28 FULL cards):** EST/boundaries, cognify, STM→MTM→LTM, Heat, surprise, recurrence, chapterization, SQL, eval fixtures |
+| `impl/P1_CAPTURE_WORKING.md` | **P1 impl (32 FULL cards):** hooks→L0→L1, MemGPT pressure, KV eviction (StreamingLLM/H₂O/SnapKV/Landmark/RMT/…), Claude/Cursor hooks+compaction, SQL capture recipe |
+| `impl/P2_EPISODE_COGNIFY.md` | **P2 impl (39 FULL cards):** EST/boundaries, cognify, STM→MTM→LTM, Heat, surprise, recurrence, chapterization, Voyager/Larimar/eval suites, SQL, fixtures |
 | `impl/P3_ANCHORS_GRAPH.md` | **P3 impl:** bi-temporal graph, entity resolve, PPR constants, promotion, edge schema + invalidation recipe |
 | `impl/P4_CONFLICT_COMPOSE.md` | **P4 impl:** SUPERSEDES algorithm, ConflictSet, compose projection, audit schema |
 | `impl/P5_HYDRATE_RETRIEVE.md` / `P6_PRIVACY_SEAL.md` | Hydrate scoring + Inv-Scope/seal recipes |
@@ -68,7 +69,7 @@ What we *can* and *did* do:
 | 2410.05779 | LightRAG | 2024 | AGENT_MEMORY + **P3** |
 | 2404.16130 | GraphRAG | 2024 | AGENT_MEMORY + **P3** |
 | 2603.11768 | SSGM | 2026 | AGENT_MEMORY + **P3/P4** |
-| 2407.04363 | AriGraph | 2024 | **P3/P4** |
+| 2407.04363 | AriGraph | 2024 | **P2/P3/P4** |
 | 2503.21322 | HyperGraphRAG | 2025 | **P3/P4** |
 | 2601.03236 | MAGMA | 2026 | **P2/P3/P4** |
 | 2506.07398 | G-Memory | 2025 | **P3/P4** |
@@ -81,7 +82,7 @@ What we *can* and *did* do:
 | 2510.18866 | LightMem | 2025 | **P2/P3/P4** |
 | 2505.19549 | Multi-granularity conversational memory (MemGAS) | 2025 | **P2/P3** |
 | 2509.25911 | Mem-α | 2025 | **P2/P3/P4** |
-| 2507.03724 | MemOS | 2025 | **P2** |
+| 2507.03724 | MemOS | 2025 | **P1/P2** |
 | 2305.10250 | MemoryBank (Zhong forgetting curve) | 2023–24 | **P2** + **BATCH3** |
 | 2304.13343 | SCM (Self-Controlled Memory) | 2023 | **P2** + **BATCH3** |
 | 2504.16754 | HEMA | 2025 | **P2** |
@@ -89,12 +90,39 @@ What we *can* and *did* do:
 | 2109.10862 | Recursive Summarizing Books | 2021 | **P2** |
 | 2311.08719 | Think-in-Memory (TiM) | 2023 | **P2** + **BATCH3** |
 | 2309.17453 | StreamingLLM | 2023 | **P1/P2** |
+| 2306.14048 | H₂O Heavy-Hitter Oracle | 2023 | **P1** |
+| 2404.14469 | SnapKV | 2024 | **P1** |
+| 2305.16300 | Landmark Attention | 2023 | **P1** |
+| 1911.05507 | Compressive Transformer | 2019 | **P1** |
+| 1901.02860 | Transformer-XL | 2019 | **P1** |
+| 2203.08913 | Memorizing Transformers | 2022 | **P1** |
+| 2207.06881 | Recurrent Memory Transformer | 2022 | **P1** |
+| 2304.11062 | RMT to 1M tokens | 2023 | **P1** |
+| 1410.3916 | Memory Networks | 2014/15 | **P1** |
+| 2305.14788 | AutoCompressors | 2023 | **P1** |
+| 2305.01625 | Unlimiformer | 2023 | **P1** |
+| 2307.06945 | ICAE (In-context Autoencoder) | 2023 | **P1** |
+| 2005.11401 | RAG (Lewis et al.) | 2020 | **P1** |
+| 2302.04761 | Toolformer | 2023 | **P1** |
+| 2210.03629 | ReAct | 2022/23 | **P1** |
+| 2303.11366 | Reflexion | 2023 | **P1** |
+| 2308.15022 | Recursive Summarization (dialogue memory) | 2023 | **P1/P2** |
+| 2403.16971 | AIOS | 2024 | **P1** |
+| 2305.14322 | RET-LLM | 2023 | **P1** |
+| 2305.16291 | Voyager | 2023 | **P2** |
+| 2403.11901 | Larimar | 2024 | **P2** |
+| 2507.02259 | MemAgent | 2025 | **P2** |
+| 2402.17753 | LoCoMo | 2024 | **P2** / eval |
+| 2112.04426 | RETRO | 2022 | **P2** |
+| 2507.05257 | MemoryAgentBench | 2025 | **P2** / eval |
+| — | Claude Code Hooks + Compaction + Context editing docs | 2025–26 | **P1** FULL |
+| — | Cursor Hooks docs | 2025–26 | **P1** FULL |
 | 2307.03172 | Lost in the Middle | 2023 | **P2/P5** |
 | 2305.02747 | Unsupervised Dialogue Topic Seg (DialSTART) | 2023 | **P2** |
 | 2308.10464 | HyperSeg (HDC topic seg) | 2023 | **P2** |
 | 2512.17083 | Granularity-Aware Dialogue Topic Seg | 2025 | **P2** |
 | 2512.13564 | Memory in the Age of AI Agents (survey) | 2025 | AGENT_MEMORY + **P3/P4** |
-| 2404.13501 | Zhang memory mechanisms survey | 2024 | AGENT_MEMORY |
+| 2404.13501 | Zhang memory mechanisms survey | 2024 | AGENT_MEMORY + **P1** |
 | 2411.00489 | AI Long-term Memory survey | 2024 | **P3/P4** |
 | 2504.15965 | From Human Memory to AI Memory survey | 2025 | **P3** |
 | 2603.07670 | Memory for Autonomous LLM Agents (survey) | 2026 | CORPUS + **P3/P4** |
@@ -121,7 +149,7 @@ What we *can* and *did* do:
 | 2401.18059 | RAPTOR | 2024 | **P5** |
 | 2504.18070 | PropRAG | 2025 | **P5** |
 | 2403.14403 | Adaptive-RAG | 2024 | **P5** |
-| 2410.10813 | LongMemEval | 2024 | **P5** / BATCH2 eval |
+| 2410.10813 | LongMemEval | 2024 | **P2/P5** / BATCH2 eval |
 | 2508.04903 | RCR-Router | 2025 | **P5** |
 
 ### Multi-agent frameworks (memory/sharing implications)
@@ -158,8 +186,10 @@ What we *can* and *did* do:
 | MLS RFC 9420 / 9750 | Substantial | SEALED_PACK |
 | Biscuits DESIGN+spec | Full | SEALED_PACK |
 | Macaroons NDSS 2014 | Substantial | SEALED_PACK |
-| Claude Code hooks docs | Full | PARALLEL |
-| Cursor hooks docs | Full | PARALLEL |
+| Claude Code hooks docs | Full | PARALLEL + **P1** |
+| Cursor hooks docs | Full | PARALLEL + **P1** |
+| Claude Compaction (`compact-2026-01-12`) | Full | **P1** |
+| Claude Context editing (`clear_tool_uses` / thinking) | Full | **P1** |
 
 ### Classical / supporting FULL (context only)
 
@@ -233,13 +263,13 @@ These appear repeatedly across surveys and are **queued** for future FULL passes
 
 | Paper / system | One-line role |
 |----------------|---------------|
-| Reflexion / Voyager | FULL in Batch 2 — kept here only as survey cross-refs |
+| Reflexion / Voyager | **FULL in P1/P2** (+ Batch 2) — kept here only as survey cross-refs |
 | Cognee | Queryable graph embeddings library (docs/product; limited arXiv) |
 | OpenMemory / MemMachine / Memary | Graph memory toolkits |
 | LoCoMo / LongMemEval / MemoryAgentBench / MemoryArena / MemBench / RealMem | Evaluation suites — LoCoMo/LongMemEval/MemoryAgentBench/DialSim/MemoryBench now FULL |
-| RETRO / Memorizing Transformers / RMT | Neural parametric memory lineage |
-| Memory Networks / NTM / DNC | Classical differentiable memory (partial FULL above) |
-| ReAct | Trajectory-as-short-horizon-memory |
+| RETRO / Memorizing Transformers / RMT | **FULL in P1/P2** — neural parametric / retrieval memory lineage |
+| Memory Networks / NTM / DNC | Memory Networks FULL in P1; NTM supporting in classical table |
+| ReAct | **FULL in P1** — trajectory-as-short-horizon-memory |
 | FLEX | Semantic gating for trajectory merge |
 | ConfAIde / CaMeL / Fides | ConfAIde + Fides FULL in Batch 2; CaMeL still queued |
 | Classic REBEL paper | Seq2seq RE; arXiv ID collision in fetch — use HippoRAG OpenIE practice for MoDeX v1 |
@@ -277,3 +307,4 @@ When expanding this corpus:
 | 2026-08-08 | **Batch 3:** 15 new FULL + 3 re-read extras in `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH3.md` (Memento, ReasoningBank, MEM1, LEGOMem, MemAct, O-Mem, Agent KB, H-Mem, MemoryBench, DialSim, MemoChat, Memory-as-a-Tool, Sleep-SCM, LTM Self-Evolution, LLM-Agents §memory; extras: MemoryBank/SCM/TiM). P5 hydrate IDs recorded in ledger. |
 | 2026-08-08 | P2 major expansion: ES-Mem (2601.07582), Membox (2601.03785), RecMem body thresholds, MemoryBank; cognify HARD/SOFT rules + `boundary_summary` + episode SQL. |
 | 2026-08-08 | P2 FULL deep-read pass: **28** mechanism cards in `impl/P2_EPISODE_COGNIFY.md` (~785 lines); ledger adds MemoryBank, SCM, HEMA, Cognitive Weave, RecSumBooks, TiM, StreamingLLM, Lost-in-Middle, MemOS, DialSTART, HyperSeg, GranularityTopicSeg; Graphiti/A-MEM/Nemori/… marked **P2**. |
+| 2026-08-08 | **P1 FULL deep-read pass:** `impl/P1_CAPTURE_WORKING.md` (**32** mechanism cards) — MemGPT/GenAgents/ReAct/Reflexion + KV lineage (StreamingLLM/H₂O/SnapKV/Landmark/Compressive/Tr-XL/Memorizing/RMT/AutoCompressors/Unlimiformer/ICAE) + RAG/Toolformer/SCM/MemoryBank/TiM + Claude/Cursor hooks & compaction/context-editing docs + AIOS/MemOS/RET-LLM. **P2 expanded to 39 cards** (Voyager/Larimar/MemAgent/LoCoMo/LongMemEval/RETRO/AriGraph/MemoryAgentBench/RecSumDialogue/surveys). Ledger + hooks/compaction rows updated. |
