@@ -18,7 +18,7 @@ What we *can* and *did* do:
 
 | Bucket | Approx count | Meaning |
 |--------|--------------|---------|
-| **FULL deep-read** | **~100+ distinct primary texts** | Full body mechanisms extracted into memos (incl. P2–P5 + Batch 2/3) |
+| **FULL deep-read** | **~110+ distinct primary texts** | Full body mechanisms extracted into memos (incl. P1–P5 + Batch 2/3) |
 | **On-disk fulltext cache** | **240+** files in `/tmp/modex-papers/full/` | Fetched bodies available for continued extraction |
 | **Survey-indexed** | 150–300+ via survey bibliographies | Named + one-line role from surveys; not independently full-read |
 | **Stub / TODO** | remainder of agent-memory + crypto/auth literature | Queued for later FULL passes |
@@ -83,8 +83,8 @@ What we *can* and *did* do:
 | 2505.19549 | Multi-granularity conversational memory (MemGAS) | 2025 | **P2/P3** |
 | 2509.25911 | Mem-α | 2025 | **P2/P3/P4** |
 | 2507.03724 | MemOS | 2025 | **P1/P2** |
-| 2305.10250 | MemoryBank (Zhong forgetting curve) | 2023–24 | **P2** + **BATCH3** |
-| 2304.13343 | SCM (Self-Controlled Memory) | 2023 | **P2** + **BATCH3** |
+| 2305.10250 | MemoryBank (Zhong forgetting curve) | 2023–24 | **P1/P2** + **BATCH3** |
+| 2304.13343 | SCM (Self-Controlled Memory) | 2023 | **P1/P2** + **BATCH3** |
 | 2504.16754 | HEMA | 2025 | **P2** |
 | 2506.08098 | Cognitive Weave | 2025 | **P2** |
 | 2109.10862 | Recursive Summarizing Books | 2021 | **P2** |
