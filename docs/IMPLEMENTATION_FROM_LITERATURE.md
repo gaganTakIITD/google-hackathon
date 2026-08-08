@@ -1,6 +1,7 @@
-# MoDeX Implementation From Literature
+# Kedger Implementation From Literature
 
 > **Status:** Living implementation guide synthesized from **full-body deep-reads**  
+> **Product:** **Kedger** (not MoDeX — different product)  
 > **Date:** 2026-08-08  
 > **Audience:** Engineers implementing Phase A–E against locked schemas  
 > **Companion:** `docs/research/impl/P1…P6_*.md`, `docs/research/CORPUS_INVENTORY.md`  
@@ -10,7 +11,7 @@
 
 ## 0. How to use this document
 
-For each MoDeX component:
+For each Kedger component:
 
 1. **Do this** — concrete algorithm / schema / constant  
 2. **Because** — which papers showed it and why  
@@ -20,9 +21,9 @@ If a constant is marked `TUNE`, start with the listed default and measure on han
 
 ---
 
-## 1. Layer mapping (literature → MoDeX)
+## 1. Layer mapping (literature → Kedger)
 
-| MoDeX | Closest literature analogues (deep-read) | Implementation stance |
+| Kedger | Closest literature analogues (deep-read) | Implementation stance |
 |-------|------------------------------------------|------------------------|
 | **L0 Raw** | MemGPT FIFO queue; MemoryOS STM dialogue pages; RecMem subconscious embeds; StreamingLLM sink tokens | Append-only, rotatable, never handoff-canonical |
 | **L1 Working** | MemGPT main/core; MIRIX Core (persona/human); MemoryOS in-flight STM chain meta; AIOS context | Mutable UPSERT per workstream; small; always hydrated first |
@@ -178,7 +179,7 @@ for c in candidates:
 | Field | Meaning |
 |-------|---------|
 | `valid_at` / `invalid_at` | When fact was true in the world/task |
-| `created_at` / `updated_at` | When MoDeX learned/changed it |
+| `created_at` / `updated_at` | When Kedger learned/changed it |
 
 ### Entity graph
 - `EntityNode(normalized_key)` unique per repo  
@@ -245,7 +246,7 @@ StateFuse (projection authority), TOKI (typed ops + audit rows), MemClaw (contra
 ## 7. Hydrate / L4 compile (P5)
 
 ### Scoring (start formula)
-Inspired by Generative Agents `recency × importance × relevance`, MemoryOS Heat, and MoDeX survival order:
+Inspired by Generative Agents `recency × importance × relevance`, MemoryOS Heat, and Kedger survival order:
 
 ```text
 score(a) =
@@ -311,7 +312,7 @@ unshare:
 Age-shaped multi-recipient + XChaCha20-Poly1305 STREAM + Ed25519 sign-then-encrypt; **revoke = reseal new epoch**.
 
 ### MIRIX Knowledge Vault lesson
-Secrets belong in a **vault-like visibility**, never Semantic/Episodic share paths. Map to MoDeX `private_raw` + never-promote.
+Secrets belong in a **vault-like visibility**, never Semantic/Episodic share paths. Map to Kedger `private_raw` + never-promote.
 
 ### Do not
 - Existence oracles via 403.  
