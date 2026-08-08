@@ -17,7 +17,9 @@ Chat context is ephemeral. This file is the durable constitution for:
 4. The **locked store** (compact-native Anchors + Evidence)
 5. The **memory graph** orchestration
 6. The **handoff** model across sessions, branches, agents, and parallel tasks
-7. Research influences and phased build plan
+7. **Privacy / access control** for handoff (not world-discoverable)
+8. **Sealed structured storage** (markdown is not the source of truth)
+9. Research influences and phased build plan
 
 If a future session contradicts this file, update this file deliberately — do not silently drift.
 
@@ -617,27 +619,29 @@ function cognify(episode_span):
 - Context rot on hydrate (strict budget + ranking)
 - Orphan facts (require provenance)
 
-### 9.11 Local persistence shape (v1 friendly)
+### 9.11 Local persistence shape (v1 friendly) — revised
+
+> **Lock update:** plain markdown / world-readable json under the git repo is **not** the canonical store.
+
+Preferred v1 shape:
 
 ```text
-.modex/
-  config.json
-  raw/events.jsonl
-  graph/
-    nodes.jsonl
-    edges.jsonl
-    working/<workstream>.json
-  index/
-    inverted.json
-    vectors.sqlite          # optional later
-  handoff/
-    <workstream>/current.md
-    <workstream>/current.json
-    <workstream>/history/<handoff_id>.*
-  l3/anchors.jsonl          # or entirely inside graph/nodes
+~/.modex/                                 # user-private by default (not in git)
+  keys/                                   # local keyring material (or OS keychain refs)
+  projects/<repo_fingerprint>/
+    store.sqlite                          # canonical structured store (optionally SQLCipher)
+    raw/events.ring                       # ephemeral observations
+    packs/<workstream>/<handoff_id>.mxp   # sealed handoff packs
+    packs/<workstream>/HEAD               # pointer to current pack id
+    acl/<workstream>.json                 # membership / capability policy (local)
+
+<repo>/.modex/                            # optional, minimal, mostly pointers/policy
+  project.json                            # repo id, policies, no private payloads
+  .gitignore                              # deny packs/raw/store by default
 ```
 
-No Neo4j required for v1. Embedded graph + jsonl/sqlite is enough.
+Canonical meaning lives in **structured store + sealed packs**, not in `.md` files.  
+No Neo4j required for v1.
 
 ---
 
@@ -783,37 +787,221 @@ Hydrate modes:
 3. Handoffs form a relation graph  
 4. Multi-agent safety = workstream isolation + shared repo anchors  
 5. Hydrate is routed, ranked, and budgeted — never dump all memory  
+6. **Handoff is capability-gated, not world-discoverable**  
+7. **Markdown is not the canonical handoff format**  
 
 ### 10.12 One-sentence handoff lock
 
-> Handoff is a workstream-scoped, relational boot pack compiled from compact Anchors — carrying continuity across sessions, branches, and agents, while keeping parallel tasks isolated and linking related sessions instead of flattening them into one blob.
+> Handoff is a workstream-scoped, relational, **sealed** boot pack compiled from compact Anchors — carrying continuity across sessions, branches, and authorized agents, while keeping parallel tasks isolated and linking related sessions instead of flattening them into one blob.
+
+### 10.13 Why markdown is the wrong canonical format
+
+Markdown is fine as an **ephemeral render** after authorized hydrate (for pasting into an agent).  
+It is a bad **source of truth** for handoff because:
+
+| Problem | Why it hurts |
+|---------|--------------|
+| No access control | Anyone with repo/fs access can read it |
+| Git-leakage | Easy to commit/push secrets + private reasoning |
+| Weak structure | Meaning drifts; hard to validate/rank/merge |
+| No integrity | Tamper/corruption not detectable |
+| Bad multi-agent merge | Diffing prose packs is lossy and unsafe |
+| Discoverability | World-readable filenames advertise active workstreams |
+
+**Lock:** canonical handoff storage is a **sealed structured pack** (`.mxp`), not `.md`.
 
 ---
 
-## 11. Privacy, trust, and team sharing
+## 11. Privacy, access control, and sealed storage
 
-### 11.1 Defaults
+This section is now a first-class product lock, not an afterthought.
 
-- Redact secrets/keys/tokens on ingest
-- L0 raw never shared by default
-- Shareable surfaces: active Anchors + episode digests + handoff packs
-- Every Anchor has provenance
-- `forget` must work
-- Inspectable plain files (markdown/json), not opaque-only storage
+### 11.1 Privacy thesis
 
-### 11.2 Visibility scopes
+> Continuity is for **authorized developers of a workstream**, not for everyone who can see the repo.
+
+Handoff without access control becomes accidental surveillance + IP leakage.
+
+### 11.2 Threats we explicitly care about
+
+1. Random teammate / outsider reads another task’s private reasoning  
+2. Public git history leaks handoff contents  
+3. Parallel agent on same machine reads the wrong workstream  
+4. Shared CI/runner disk exposes packs  
+5. “Helpful” plaintext markdown gets committed  
+6. Lost laptop exposes unencrypted memory store  
+
+### 11.3 Visibility classes (locked)
+
+| Class | Contents | Default audience |
+|-------|----------|------------------|
+| `private_raw` | L0 observations, full prompts/tool dumps | local actor only |
+| `workstream_private` | working state, episode digests, handoff packs | workstream members only |
+| `repo_shared_safe` | carefully promoted Anchors marked shareable (e.g. stable constraints) | repo memory principals |
+| `ephemeral_render` | temporary hydrate text for an agent | current authorized session only |
+
+**Default:** handoffs are `workstream_private`.  
+They are **not** globally discoverable inside the repo.
+
+### 11.4 Access model: membership + capability (not broadcast)
+
+Handoff access requires **both**:
+
+1. **Principal identity** (developer/agent actor key)  
+2. **Capability for that workstream/pack**
 
 ```text
-private_raw
-team_graph
-handoff
+Principal
+- principal_id
+- public_key
+- display_name
+- device_id?
+
+Capability
+- capability_id
+- workstream_id and/or handoff_id
+- grantee_principal_id
+- permissions: read_hydrate | append | admin
+- expires_at?
+- issuer_signature
 ```
 
-### 11.3 Team bus for v1
+Sharing is explicit:
 
-- `.modex/` in repo or user-accessible project memory dir
-- Share via git commit/copy of handoff + anchors
-- No hosted sync required initially
+```text
+modex grant --workstream auth-refactor --to gagan
+modex handoff --share gagan          # seal pack to grantee key(s)
+modex revoke --workstream auth-refactor --from gagan
+```
+
+No capability ⇒ pack cannot be decrypted/hydrated, even if the file is copied.
+
+This is the privacy tradeoff lock:
+
+- Easy continuity for people **on the task**
+- Hard/no continuity for everyone else
+
+### 11.5 Sealed pack format (`.mxp`) — canonical handoff storage
+
+Replace plaintext markdown/json handoff files with a sealed envelope:
+
+```text
+.mxp (Modex Pack)
+├─ header (plaintext, minimal)
+│   - magic / schema_version
+│   - handoff_id / workstream_id / repo_fingerprint
+│   - created_at / from_actor
+│   - content_hash
+│   - recipient_key_ids[]          # who can open
+│   - algo suite
+├─ signature                      # authenticity from from_actor
+└─ ciphertext                     # encrypted payload
+    └─ payload (structured)
+        - anchors[]               # compact meaning first
+        - working
+        - episode_digests[]
+        - relations
+        - evidence? (optional, higher sensitivity)
+        - redaction_manifest
+```
+
+Properties:
+
+- **Secure:** encrypted for recipients only  
+- **Meaningful:** structured Anchors preserve judgment under compact budgets  
+- **Handoff-easy:** one file can be copied/sent; recipient `modex hydrate --pack x.mxp`  
+- **Not broadly discoverable:** header reveals ids, not private reasoning  
+- **Integrity:** hash + signature  
+
+Optional later: also encrypt local `store.sqlite` at rest (SQLCipher / OS keychain-wrapped key).
+
+### 11.6 Markdown policy (strict)
+
+| Use | Allowed? |
+|-----|----------|
+| Canonical store | **No** |
+| Canonical handoff | **No** |
+| Git-committed project memory | **No** (by default) |
+| Ephemeral hydrate render for current agent | Yes, temp only |
+| `modex inspect --render md` for authorized user | Yes, explicit, local |
+
+```text
+hydrate flow:
+  authorize principal
+  → open sealed pack / store
+  → compile ranked structured view
+  → inject into agent via hook/MCP/temp file
+  → temp render deleted or kept only in secure session cache
+```
+
+### 11.7 Discoverability rules
+
+By default:
+
+- Do **not** list other principals’ private workstreams to unauthorized users  
+- `modex status` shows only workstreams you can access  
+- Pack filenames should not require revealing sensitive titles in shared dirs  
+- Repo `.modex/` may store project policy only; private packs live under user store or sealed exchange  
+
+Authorized listing:
+
+```text
+modex workstreams          # only visible memberships
+modex handoff list         # only decryptable/readable packs
+```
+
+### 11.8 What may be broadly shared vs must stay sealed
+
+| Memory kind | Default share posture |
+|-------------|-----------------------|
+| Raw prompts / tool dumps | never |
+| Working state / in-flight details | workstream members only |
+| Episode digests | workstream members only |
+| Handoff packs | sealed to recipients |
+| Stable repo constraints (explicitly marked `shareable`) | optional repo-shared |
+| Personal gotchas | private unless promoted |
+
+Promotion to `repo_shared_safe` must be explicit (or very conservative auto policy).
+
+### 11.9 Team bus for v1 (privacy-preserving)
+
+Not “commit markdown to git.”
+
+v1 exchange options:
+
+1. **Local same-machine principals** via shared user store + ACL  
+2. **Sealed pack file transfer** (chat/drive/USB) encrypted to recipient keys  
+3. Later: sync service with server-side ciphertext and membership
+
+Git may store:
+
+- public policy stubs  
+- maybe shareable stable anchors if team opts in  
+
+Git must not store by default:
+
+- raw events  
+- private handoff packs  
+- working state  
+
+### 11.10 Privacy tradeoff statement (locked)
+
+> We optimize for **authorized continuity**, not public memory broadcasting.  
+> If a person is not a workstream principal (or holder of a pack capability), they should not be able to discover or read that handoff’s meaning.
+
+This is intentional friction — and necessary trust.
+
+### 11.11 Trust primitives checklist
+
+- [ ] Principal identity keys  
+- [ ] Workstream ACL / capabilities  
+- [ ] Sealed `.mxp` encrypt+sign  
+- [ ] Redaction on ingest  
+- [ ] Default deny discoverability  
+- [ ] `grant` / `revoke`  
+- [ ] `forget` / pack tombstones  
+- [ ] No plaintext markdown canonical files  
+- [ ] Temp hydrate render only after auth  
 
 ---
 
@@ -823,11 +1011,13 @@ handoff
 
 ```text
 modex status
-modex handoff
-modex hydrate
+modex handoff                 # compile sealed pack for current workstream
+modex hydrate                 # authorized hydrate only
 modex remember decision|reject|constraint "..."
 modex forget <id>
 modex why <entity|topic>
+modex grant --workstream <id> --to <principal>
+modex revoke --workstream <id> --from <principal>
 ```
 
 ### 12.2 Engine / hooks
@@ -845,7 +1035,10 @@ modex graph export|stats
 modex graph path <a> <b>
 modex graph neighbors <entity> --depth 2
 modex hydrate --workstream <id>
+modex hydrate --pack <file.mxp>
 modex hydrate --pin <handoff_id>
+modex inspect --render md     # explicit authorized local render only
+modex keys ...
 ```
 
 ### 12.4 Design rule
@@ -853,7 +1046,7 @@ modex hydrate --pin <handoff_id>
 All doors (hooks now, MCP later) call the same engine modules:
 
 ```text
-ingest → router → store/graph → compact/cognify → promote → compile → hydrate
+ingest → redact → router → store/graph → compact/cognify → promote → seal/compile → authorize → hydrate
 ```
 
 ---
@@ -914,6 +1107,8 @@ Memory/handoff is working when:
 6. L0 rotation does not destroy Anchors  
 7. Parallel workstreams do not contaminate each other  
 8. Multi-session lineage remains queryable via handoff relations  
+9. Unauthorized principal cannot list/decrypt another workstream handoff  
+10. Canonical packs are sealed `.mxp`; no plaintext markdown source-of-truth  
 
 Suggested fixture tests:
 
@@ -929,41 +1124,50 @@ Suggested fixture tests:
 
 ## 16. Phased implementation plan
 
-### Phase A — Store skeleton
+### Phase A — Store skeleton + identity
 
-- `.modex/` layout
-- L0 append + rotation
+- private user store layout (not git-canonical)
+- L0 append + rotation + redaction
 - L1 working upsert
 - explicit Anchor remember/forget
-- manual handoff compile from Working + Anchors
-- CLI: ingest, remember, handoff, hydrate, status
+- principal key bootstrap (`modex keys`)
+- CLI: ingest, remember, status, doctor
 
-### Phase B — Automatic chapterization
+### Phase B — Sealed handoff
+
+- compile structured HandoffPack
+- seal to `.mxp` (encrypt+sign)
+- workstream ACL grant/revoke
+- authorized hydrate only
+- ephemeral render path (no markdown SoT)
+
+### Phase C — Automatic chapterization
 
 - boundary detector
 - L2 episode cognify (deterministic)
 - L0 prune after episode
-- auto recompile L4
+- auto sealed recompile
 
-### Phase C — Graph association + promotion
+### Phase D — Graph association + promotion
 
 - entity/anchor edges
 - conflict invalidation
 - ranked hydrate budget
 - `modex why`
 
-### Phase D — Hook packs
+### Phase E — Hook packs
 
 - major IDE adapters calling same CLI
-- SessionStart hydrate inject where supported
+- SessionStart authorized hydrate inject
 
-### Phase E — later
+### Phase F — later
 
 - MCP tools
 - optional LLM episode distill
 - associative search / PPR-like retrieval
-- hosted sync
+- sync service for ciphertext + membership
 - richer community graph
+- at-rest DB encryption defaults
 
 ---
 
@@ -984,18 +1188,23 @@ Use this as the quick constitution:
 - [x] Handoffs are relational (lineage/parallel/branch)  
 - [x] Multi-agent isolation by workstream  
 - [x] Hydrate is ranked + budgeted projection  
-- [ ] Next to lock in detail: workstream identity rules + exact JSON schemas + hydrate routing algorithm constants  
+- [x] Handoff is capability-gated / not world-discoverable  
+- [x] Canonical storage is sealed structured packs + private store (not markdown)  
+- [x] Markdown allowed only as ephemeral authorized render  
+- [ ] Next to lock in detail: crypto suite choice, workstream identity rules, exact schemas, hydrate ranking constants  
 
 ---
 
 ## 18. Next design locks needed (not done yet)
 
-1. **Exact JSON schemas** for Anchor, Evidence, Episode, WorkingState, HandoffPack, Graph Edge  
-2. **Workstream identity algorithm** (how to create/detect/name workstreams)  
-3. **Promotion signal list** (what may auto-become an Anchor vs explicit-only)  
-4. **Hydrate ranking function + numeric budgets**  
-5. **Conflict/compose rules** for parallel packs in one workstream  
-6. **IDE hook event minimum set** for v1 (start/stop/pre_compact/prompt/edit)
+1. **Exact JSON schemas** for Anchor, Evidence, Episode, WorkingState, HandoffPack, Graph Edge, Capability  
+2. **`.mxp` crypto suite** (e.g. age/libsodium recipient encryption + signature scheme) and key UX  
+3. **Workstream identity algorithm** (how to create/detect/name workstreams)  
+4. **Promotion signal list** (what may auto-become an Anchor vs explicit-only)  
+5. **Hydrate ranking function + numeric budgets**  
+6. **Conflict/compose rules** for parallel packs in one workstream  
+7. **IDE hook event minimum set** for v1 (start/stop/pre_compact/prompt/edit)  
+8. **Shareable-anchor policy** (what can ever become `repo_shared_safe`)
 
 ---
 
@@ -1015,11 +1224,19 @@ Use this as the quick constitution:
 
 **Handoff**
 
-> Handoff is a workstream-scoped relational boot pack compiled from compact Anchors for continuity across sessions, branches, and agents.
+> Handoff is a workstream-scoped relational **sealed** boot pack compiled from compact Anchors for continuity across sessions, branches, and **authorized** agents.
+
+**Privacy**
+
+> Continuity for task principals; non-discoverability for everyone else.
+
+**Storage**
+
+> Structured sealed packs preserve meaning; markdown is only an ephemeral render.
 
 **Spine**
 
-> `hooks → CLI engine → Anchor store/graph → handoff pack → hydrate`
+> `hooks → CLI engine → Anchor store/graph → seal handoff → authorize → hydrate`
 
 ---
 
@@ -1032,10 +1249,14 @@ Use this as the quick constitution:
 | Episode | Compressed chapter of work from a boundary |
 | Workstream | Logical task thread that owns continuity |
 | HandoffPack | Compiled boot image for next consumer |
+| `.mxp` | Sealed Modex Pack envelope (encrypt + sign + structured payload) |
+| Principal | Authenticated developer/agent identity that can hold capabilities |
+| Capability | Grant to read/hydrate/append a workstream or pack |
 | Cognify | Transform raw/working span into graph + anchors + episode |
-| Hydrate | Inject ranked memory into a new/continuing session |
+| Hydrate | Authorized injection of ranked memory into a session |
 | Compact-native | Designed to remain meaningful when storage/context is tight |
 | Invalidation | Mark old Anchor inactive when superseded; preserve history |
+| Ephemeral render | Temporary markdown/text view generated after auth; not source of truth |
 
 ---
 
@@ -1052,3 +1273,4 @@ When architecture decisions change:
 | Date | Change |
 |------|--------|
 | 2026-08-08 | Initial synthesis from architecture/design conversation: problem framing, hooks+CLI lock, Anchor store lock, memory graph orchestration, handoff/workstream model, phased plan. |
+| 2026-08-08 | Privacy/access lock: capability-gated handoffs, non-discoverability defaults, sealed `.mxp` packs, reject markdown as canonical storage, private user store layout, grant/revoke CLI, phase plan reordered for sealed handoff. |
