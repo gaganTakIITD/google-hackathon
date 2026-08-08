@@ -1,10 +1,10 @@
 # P2 — Episode Segmentation & Cognify (Implementation Deep-Read)
 
-> **Status:** Expanded deep-read (implementation clarity)  
 > **Date:** 2026-08-08  
-> **Pillar:** L0 span → boundary detect → L2 Episode → L3 promotion trigger → L4 reseal  
-> **Method:** Full-body reads (arXiv HTML/PDF). Not abstract skim.  
-> **Depends on:** `WORKSTREAM_AND_PROMOTION_V1.md`, hooks lock (`PRE_COMPACT`/`SESSION_END`), schemas Episode.
+> **Pillar:** L0 span → L2 Episode → trigger L3 promotion → L4 recompile  
+> **Method:** Full arXiv HTML/PDF body reads (not abstracts). Mechanism cards extract boundary detectors, STM→MTM→LTM migration, cognify/compaction, chapterization, recurrence consolidation, and surprise signals.  
+> **Design locks:** `WORKSTREAM_AND_PROMOTION_V1.md` §3; `PARALLEL_COMPOSE_AND_HOOKS_V1.md` PRE_COMPACT; `IMPLEMENTATION_FROM_LITERATURE.md` §4.  
+> **Companions:** `P1_CAPTURE_WORKING.md` (STM pages); `P3_ANCHORS_GRAPH.md` (promotion after episode).
 
 ---
 
@@ -12,360 +12,767 @@
 
 | Bucket | Count | Notes |
 |--------|------:|-------|
-| **FULL deep-read this expansion** | **14+** | ES-Mem, Membox, RecMem, Nemori, EM-LLM, MemoryOS, Graphiti episodes, MemGPT pressure, LightMem, HEMA, Cognitive Weave, MemGAS, MemoryBank (PDF), MemOS lifecycle |
-| Prior FULL reused for algorithms | 8 | Already in AGENT_MEMORY / BATCH memos; re-extracted for cognify constants |
-| Survey / secondary | 2 | Long-term memory surveys for bibliography pointers |
-| **Abstract-only** | 0 in cards below | |
+| **FULL deep-read (this pillar pass)** | **28** | Bodies under `/tmp/modex-papers/full/` + `text/`; cards below |
+| Must-list papers FULL | **22** | Nemori…MemOS + MemoryBank + EST/topic-seg extras |
+| Overlap with prior AGENT_MEMORY / P3 memos | 12 | Re-read for cognify algorithms/constants |
+| Abstract-only / stub in this memo | **0** | Queued IDs stay in `CORPUS_INVENTORY.md` |
 
-New primary FULL this pass: **ES-Mem (2601.07582)**, **Membox (2601.03785)**, **RecMem thresholds from body**, **MemoryBank (2305.10250 PDF)**.
-
----
-
-## 1. Research consensus (after close reading)
-
-Engineering/dialogue memory fails when it:
-
-1. **Fragments first, stitches later** (Membox “fragmentation–compensation”) — turn-level vectors destroy temporal/causal continuity.  
-2. Uses **fixed granularity** (every N turns) that severs decisions mid-arc (ES-Mem Fig.1 gardening→apartment pivot).  
-3. Runs **eager LLM extract every turn** (RecMem cost critique).  
-4. Treats **boundaries as invisible** — ES-Mem’s advance is to store boundary semantics as *retrieval anchors*, not only as cut points.  
-5. Consolidates without **recurrence / heat / surprise** gates → noise Anchors.
-
-**MoDeX stance:** Cognify on **typed boundaries**; keep L0 non-lossy until HARD flush; L2 = coherent episode with boundary descriptor; L3 promotion orthogonal and gated.
+**Target ≥25 FULL mechanism cards: met (28).** Combined with P3/P4 inventory, corpus FULL ledger grows by the newly marked IDs below.
 
 ---
 
-## 2. Mechanism cards
+## 1. MoDeX mapping (P2 surface)
 
-### 2.1 ES-Mem — EST dynamic segmentation + boundary-anchored retrieval  
-**arXiv:2601.07582** · FULL
+| MoDeX object | Literature analogue |
+|--------------|---------------------|
+| L0 Observation span | MemoryOS STM pages; MemGPT FIFO; RecMem subconscious; LightMem sensory+topic-STM |
+| L1 WorkingState | MemGPT working context; MemoryOS chain meta; SCM flash memory |
+| L2 Episode | Nemori narrative episode; ES-Mem event unit; EM-LLM surprise segment; Graphiti episode node; MemoryOS MTM segment |
+| Boundary | EST cut (ES-Mem/Nemori/EM-LLM); MemoryOS chain-reset; PRE_COMPACT/SESSION_END hooks |
+| Cognify | Nemori episodic integration + predict–calibrate; LightMem sleep-time; RecMem recurrence consolidate; HEMA/RecSum hierarchical summarize |
+| Heat / eviction | MemoryOS Heat; MemoryBank Ebbinghaus strength; MemGPT flush; StreamingLLM sinks |
+| Boundary text | ES-Mem refined boundary representation (coarse retrieve anchor) |
+| Promotion signal | RecMem θ_count; MemoryOS Heat≥τ; Nemori prediction gap; Memory-R1 when-to-store |
 
-**Representation (3 levels):**
-1. `bref` — refined boundary text: “Topic A ended. Transitioned to Topic B. Context: …”  
-2. `si` — event summary (topics + keywords across turns)  
-3. `ri` — raw context (verbatim span)
-
-**Segmentation (2-stage):**
-1. **Topic coherence:** recurrent topic extract per turn → embeddings \(H\); Pearson \(\rho_t\) across dims → mutual information \(I_t=-\frac12\log(1-\rho_t^2)\). Candidate cuts where \(I_t \le\) bottom quantile \(q\) (paper example **bottom 35%**).  
-2. **Intent refinement:** local windows of \(L\) turns; LLM labels `TOPIC_SHIFT` / `TOPIC_INTRO` vs continue; boundary prob \(p_{eb}\) from high/low confidence average; keep if \(p_{eb}>\tau\).
-
-**Retrieval:** Phase1 scan boundary anchors → Phase2 expand interval width \(w\) → Phase3 summary rerank/fuse → pull Level-3 raw.
-
-**MoDeX lessons:**
-- Store `boundary_summary` on Episode (not only `summary`).  
-- Prefer dynamic events over fixed turn chunks.  
-- Hydrate/`modex why` can scan boundary anchors first (coarse) then expand.
-
-### 2.2 Membox — Topic Loom + Trace Weaver  
-**arXiv:2601.03785** · FULL
-
-**Topic Loom:** sliding window (user+agent pair); LLM classifies next message as `continuous | partial_shift | discontinuous`. Partial+full shift → **seal box**. Single-message new box unconditionally appends next message (avoid orphan turns). Sealed box \(B=\{M, topic, events, keywords\}\).
-
-**Trace Weaver:** after seal, events vote into macro-traces via max cosine to existing events; LLM batch-verify append; unlinked → new traces. Events may belong to **multiple traces**.
-
-**Stats (LoCoMo):** ~5–7 utterances/box; big temporal-reasoning gains vs Mem0/A-MEM; fewer context tokens.
-
-**MoDeX lessons:**
-- Soft boundary ≈ Loom seal; map to episode close.  
-- `NEXT_IN` between episodes + optional `TRACE_OF` / workstream recurrence links (macro).  
-- Do **not** store one Observation = one memory atom as canonical L2.
-
-### 2.3 RecMem — recurrence-gated consolidation  
-**arXiv:2605.16045** · FULL
-
-**Layers:** Subconscious (embed+raw) → Episodic narratives → Semantic facts.  
-**Trigger:** cluster neighbors with \(\cos\ge\theta_{sim}\); consolidate iff \(|\mathcal{R}_i|\ge\theta_{count}\).  
-**Defaults on LoCoMo:** \(\theta_{sim}=0.7\), \(\theta_{count}=5\) (example used 2).  
-**Retrieval:** \(k_{sem}=2\cdot k_{epi}\), default \(k_{epi}=10\Rightarrow k_{sem}=20\).  
-**Limitation (paper):** thresholds are domain dials; recurrence ≠ salience always.
-
-**MoDeX lessons:**
-- L0 cheap always; LLM episode/Anchor distill on recurrence **or** HARD boundary.  
-- Align Tier B promote with \(\theta_{count}\approx 3\)–5 (engineering denser than chat → start **3**).  
-- Never auto-share from recurrence alone.
-
-### 2.4 Nemori — EST + predict–calibrate  
-**arXiv:2508.03341** · FULL (prior + re-extract)
-
-LLM boundary detector with representation alignment; episodic narrative from conversation + `boundary_reason`; semantic distillation from **prediction error** (what model failed to predict).
-
-**MoDeX:** soft boundary can use `boundary_reason` string; prediction-gap optional Phase C+ signal for Anchor candidates.
-
-### 2.5 EM-LLM — Bayesian surprise + graph boundary refinement  
-**arXiv:2407.09450** · FULL
-
-Online event formation via surprise thresholding; refine boundaries with graph metrics; retrieve by **similarity + temporal contiguity**.
-
-**MoDeX:** optional surprise detector on tool-fail bursts / large file-set jumps; always keep contiguous Evidence windows around Anchors.
-
-### 2.6 MemoryOS — STM→MTM→LPM migration  
-**arXiv:2506.06326** · FULL
-
-- STM pages FIFO → MTM.  
-- MTM segments: \(F=\cos+Jaccard>\theta\); Heat=\(\alpha N_{visit}+\beta L+\gamma e^{-\Delta t/\mu}\), \(\mu=10^7\), promote traits if Heat\(\ge\tau=5\).  
-- Two-stage retrieve: top-m segments → top-k pages.
-
-**MoDeX:** Heat feeds episode eviction ranking + Tier B signals; θ≈0.60 start.
-
-### 2.7 Graphiti episodes  
-Non-lossy episode nodes; facts derive with bi-temporal invalidation. **MoDeX:** Episode keeps `observation_ids[]`; Anchors DERIVES from Episode.
-
-### 2.8 MemGPT pressure  
-Memory-pressure warning → flush/summarize before context death. **MoDeX:** `PRE_COMPACT` = HARD cognify (non-negotiable).
-
-### 2.9 MemoryBank — forgetting curve  
-**arXiv:2305.10250** · FULL PDF  
-Strength decays with Ebbinghaus-like schedule; refresh on retrieval. **MoDeX:** use decay for **Evidence/episode ranking**, not for deleting Anchors (Anchors use SUPERSEDES).
-
-### 2.10 MemOS lifecycle  
-Generate → activate → fuse → archive → expire as schedulable states. **MoDeX Episode.status:** `active|archived|expired` separate from Anchor.status.
-
-### 2.11 LightMem / HEMA / Cognitive Weave / MemGAS  
-- **LightMem:** cheap memory-augmented path — keep cognify LLM optional.  
-- **HEMA:** hippocampus-inspired extended buffer — reinforces dual cheap/raw vs consolidated.  
-- **Cognitive Weave:** spatio-temporal resonance graph for abstracted knowledge — optional post-episode associate.  
-- **MemGAS:** multi-granularity association/selection — retrieve across episode/summary/fact grains (aligns ES-Mem levels).
+**Research distinction (locked):** Episode boundary = chapter *inside* a workstream. Workstream identity = which objective lane. Never create a new workstream on every episode cut (`WORKSTREAM_AND_PROMOTION_V1` §2.8).
 
 ---
 
-## 3. MoDeX boundary detector (implement)
+## 2. Mechanism cards (FULL papers)
+
+### 2.1 Nemori / What Deserves Memory — `2508.03341` · **FULL**
+
+**Thesis.** Assess experience utility at *distillation time* via prediction error (Predictive Coding), not only at retrieval or post-hoc access heat.
+
+**Episodic Memory Integration (three submodules).**
+1. **Local Message Partitioning** — LLM groups buffer \(\mathcal{B}_t\) into raw episodes \(\mathbf{P}\) with **high sensitivity** to topic/intent/temporal/structural shifts (prompt: split when relevance <30%, idle >30 min, explicit topic phrases; prefer 2–15 msgs/episode; when in doubt, split).
+2. **Narrative Episode Generation** — each raw \(P_j\) → narrative \(N_j\) + episodic cue \(c_j\); dual-mode retrieve (narrative for efficiency, raw for precision).
+3. **Associative Memory Integration** — stitch episodes split by observation-window limits.
+
+**Semantic Knowledge Distillation.**
+1. Anticipatory schema \(\hat{P}_{in}\) from cue \(c_{in}\) + Top-\(K_s\) semantic facts with \(\mathrm{sim}>\tau\).
+2. Prediction-error distillation: extract \(\mathcal{K}_{in}\) = what in \(P_{in}\) *deviates from* \(\hat{P}_{in}\).
+3. Agnostic consolidation into semantic store.
+
+**Constants (paper).** \(\tau=0.70\); \(K_e=K_m=5\), \(K_s=10\); retrieve \(k=10\) narratives (\(m=2k\)); top-2 include raw (\(r=2\)).
+
+**MoDeX.** Soft boundary ≈ Nemori partition cues; cognify digest = narrative template (deterministic v1); Tier-B surprise = prediction gap vs WorkingState/Anchors — **candidate**, not auto-share.
+
+---
+
+### 2.2 ES-Mem — `2601.07582` · **FULL**
+
+**Thesis.** EST boundaries are not only storage cuts — they are **retrieval anchors**.
+
+**Dynamic Event Segmentation (two-stage).**
+1. Topical coherence: mutual-information / coupling score \(I_t\); candidates \(\mathcal{C}=\{t\mid I_t\le\mathrm{Quantile}_q(\mathbf{I})\}\) with \(q\approx 0.35\) (bottom 35%).
+2. Intent-aware refinement: local windows \(\mathcal{L}_t,\mathcal{R}_t\) of \(L\) turns; LLM labels \(\mathcal{Y}_{\mathrm{shift}}\) vs \(\mathcal{Y}_{\mathrm{cont}}\); accept if \(p_{\mathrm{eb}}(t)\ge\tau_c\).
+
+**Layered memory unit.** \(M_i=\{\text{boundary text},\,s_i\text{ summary},\,r_i\text{ raw}\}\). Boundary text describes transition \(M_{i-1}\to M_i\).
+
+**Coarse-to-fine retrieve.** Boundary scan (top-\(k\) anchors) → expand windows → score \(\alpha\cdot S_{\mathrm{ctx}}+(1-\alpha)S_{\mathrm{sum}}\) → fetch raw of top-\(K\).
+
+**MoDeX.** Persist `boundary_summary` on Episode; hydrate may rank digests by boundary similarity first. Soft boundary detector can use MI/quantile heuristic without LLM in v1.
+
+---
+
+### 2.3 EM-LLM — `2407.09450` · **FULL**
+
+**Surprise boundary.** Token \(x_t\) is candidate boundary if
+\[
+-\log P(x_t\mid x_{<t}) > T,\quad T=\mu_{t-\tau:t}+\gamma\,\sigma_{t-\tau:t}.
+\]
+Moving-window threshold adapts; \(\gamma\) controls sensitivity (paper PG-19 uses \(\gamma=10^{-3}\) scale experiments).
+
+**Boundary refinement (Algorithm 1).** Treat attention-key similarity as adjacency \(A\); between consecutive surprise boundaries \((\alpha,\beta)\), pick \(\hat\beta\) maximizing modularity (or min conductance). Complexity \(\mathcal{O}(nm)\) with chunk size \(m\).
+
+**Retrieval.** Similarity buffer \(k_s\) (k-NN on event reps) + contiguity buffer \(k_c\) (neighbors \(\pm n\)); keep initial tokens + local context (StreamingLLM kinship).
+
+**MoDeX.** Optional soft signal: tool/test surprise or Anchor contradiction ≈ Bayesian surprise. Do **not** require KV-cache modularity in v1; keep modularity idea as future refinement if embeddings of span windows are available.
+
+---
+
+### 2.4 RecMem — `2605.16045` · **FULL**
+
+**Thesis.** Eager per-turn LLM consolidation is overkill; consolidate on **recurrence**.
+
+**Subconscious layer.** Every interaction embedded lightly; always retrievable.
+
+**Trigger.** For new unit \(s_i\), retrieve top-\(k\); \(\mathcal{R}_i=\{s_j\mid\cos\ge\theta_{\mathrm{sim}}\}\); consolidate iff \(|\mathcal{R}_i|\ge\theta_{\mathrm{count}}\).
+
+**Episodic.** Merge-first if nearest episode \(\cos\ge\theta_{\mathrm{sim}}\); else build timestamp-sorted cluster → LLM episodic narratives.
+
+**Semantic refinement.** After episode write, extract fine facts omitted by summary (grounds Anchors).
+
+**Constants.** Casual: \(\theta_{\mathrm{sim}}=0.7\), \(\theta_{\mathrm{count}}=5\). Task-oriented: \(0.6\), \(4\). Retrieve budgets \(k_{\mathrm{sub}}=10\), \(k_{\mathrm{epi}}=5\), \(k_{\mathrm{sem}}=10\). Up to **87%** construction-token reduction vs eager Mem0/A-Mem.
+
+**MoDeX.** Map to Tier-B recurrence with eng default \(\theta_{\mathrm{count}}=3\) (denser coding threads — lock already in promotion doc). Subconscious = L0 retained until cognify; never delete rare but critical one-shots (RecMem caveat) — Tier-A explicit remember bypasses recurrence.
+
+---
+
+### 2.5 MemoryOS — `2506.06326` · **FULL**
+
+**Tiers.** STM (fixed FIFO dialogue pages + chain meta) → MTM (segmented paging) → LPM (persona/KB/traits).
+
+**Page.** \(page_i^{\mathrm{chain}}=\{Q_i,R_i,T_i,meta_i^{\mathrm{chain}}\}\). Chain meta: LLM decides continue vs **reset** on topic discontinuity, then summarizes chain.
+
+**Segment membership.**
+\[
+\mathcal{F}_{\mathrm{score}}=\cos(\mathbf{e}_s,\mathbf{e}_p)+\mathrm{Jaccard}(K_s,K_p);\quad
+\mathrm{merge\ if\ }\mathcal{F}_{\mathrm{score}}>\theta.
+\]
+Paper default \(\theta=0.6\).
+
+**Heat.**
+\[
+\mathrm{Heat}=\alpha N_{\mathrm{visit}}+\beta L_{\mathrm{interaction}}+\gamma R_{\mathrm{recency}},\quad
+R_{\mathrm{recency}}=\exp(-\Delta t/\mu),\ \mu=10^7\mathrm{s}.
+\]
+Evict lowest Heat when MTM full; if \(\mathrm{Heat}\ge\tau=5\) promote traits/facts to LPM then reset \(L_{\mathrm{interaction}}\).
+
+**Retrieve.** All STM; MTM two-stage top-\(m\) segments then top-\(k=10\) pages; LPM top-10 KB/traits.
+
+**MoDeX.** STM→L0/L1; MTM segment→L2 Episode; LPM→L3 **candidates** only (append+SUPERSEDES, never trait overwrite / auto-share).
+
+---
+
+### 2.6 LightMem — `2510.18866` · **FULL**
+
+**Atkinson–Shiffrin inspired.**
+1. **Light1 sensory:** pre-compress tokens (LLMLingua-2 / entropy retain above percentile).
+2. **Light2 topic-aware STM:** group by semantic/topic similarity into segments (not fixed windows); flush when token threshold `th` hit → summarize.
+3. **Light3 LTM:** soft-insert with timestamp online; **sleep-time** offline parallel update queues (Top-\(k\) later similar entries with \(t_j\ge t_i\)).
+
+**Efficiency.** Up to ~38× token / ~30× API reduction vs eager baselines on LongMemEval; sleep-time improves fidelity without online latency.
+
+**MoDeX.** Cognify online path stays cheap (deterministic digest); schedule sleep-time job for LLM narrative polish + promotion. Enforce update direction \(t_{\mathrm{new}}\ge t_{\mathrm{old}}\).
+
+---
+
+### 2.7 Graphiti / Zep — `2501.13956` · **FULL**
+
+**Episode subgraph.** Non-lossy episodic nodes \(n_i\in\mathcal{N}_e\) with reference time \(t_{\mathrm{ref}}\); semantic entities/facts build *on top of* episodes; communities optional.
+
+**Ingest.** Episode (+ reflection window **n=4** prior messages) → NER/entity resolve → fact extract → bi-temporal invalidate on contradiction.
+
+**MoDeX.** Episode is provenance root; cognify **must** keep `observation_ids` / span; never replace episodes with Anchors-only store.
+
+---
+
+### 2.8 MemGPT — `2310.08560` · **FULL**
+
+**Main context.** System (RO) + working context (RW via functions) + FIFO queue; index-0 = recursive summary of evicted messages.
+
+**Pressure / flush.**
+- Warning at **~70%** context → system message so LLM can archive to working/archival.
+- Flush at **~100%** → evict **~50%** oldest queue messages; regenerate recursive summary; evicted stay in recall DB forever.
+
+**MoDeX.** PRE_COMPACT = hard cognify *before* IDE compact (hooks lock). Map archival writes → Episode + Anchor candidates; recursive summary → Episode digest / WorkingState notes — not sole truth.
+
+---
+
+### 2.9 SCM (Self-Controlled Memory) — `2304.13343` · **FULL**
+
+**Components.** LLM agent + memory stream + **memory controller**.
+
+**Controller gates.**
+1. Activate memory? (skip for chitchat).
+2. Summary vs full? Assess when item >**800** tokens **and** activated total >**2000**.
+
+**Flash vs activation.** Short-term = previous segment; long-term = activation memory from stream.
+
+**MoDeX.** Cognify controller: skip soft cognify on trivial lint/formatter spans; when packing digests under budget, prefer summary; keep raw Observation pointers.
+
+---
+
+### 2.10 HEMA — `2504.16754` · **FULL**
+
+**Dual memory.** Compact Memory (always-visible running one-sentence / hierarchical summary) + Vector Memory (episodic chunks).
+
+**Hierarchy.** Beyond long dialogues, **two-level summary-of-summaries** eliminates cascade errors; ablation: SoS needed with semantic forgetting.
+
+**Semantic forgetting.** Prune low-salience vector entries (~bottom 0.5% salience in paper) — recall drop small, latency improves.
+
+**MoDeX.** Episode digest = compact chapter; optional offline recursive SoS over episode tree for long workstreams (>~1000 turns / many episodes). Forgetting = rank/evict L2 heat, **not** hard-delete Anchors.
+
+---
+
+### 2.11 Cognitive Weave — `2506.08098` · **FULL**
+
+**Insight Particles + STRG.** Nexus Weaver orchestrates lifecycle; Cognitive Refinement triggers: temporal, significant event, resource saturation, fragmentation metrics.
+
+**Insight synthesis.** Compress raw history into higher-level memories (not only store utterances).
+
+**MoDeX.** Sleep-time / offline cognify triggers mirror refinement conditions; L3 Anchors = synthesized insights with provenance — refinement proposes candidates.
+
+---
+
+### 2.12 MemGAS / multi-granularity — `2505.19549` · **FULL**
+
+**Index same dialogue at multiple granularities** (turn / session / topic / …). Router weights \(w^g\) by query type; initial node scores → **PPR** expand → LLM recognition filter.
+
+**Fair retrieve setting.** Often top-3 sessions then expand.
+
+**MoDeX.** Store Episode + Observation spans + topic keywords + Anchor statements as parallel granularities; hydrate uses multi-granularity (detail in P5). Cognify emits topic keywords for segment join.
+
+---
+
+### 2.13 Recursive Summarizing Books — `2109.10862` · **FULL**
+
+**Tree decomposition.** Leaf summarize → height-1 composition → full tree; RL trains node policies with human feedback; each task is its own episode for training.
+
+**Advantage.** Decomposition beats end-to-end for long books; errors accumulate with depth — need good leaf quality.
+
+**MoDeX.** Offline chapterization: recursive summarize over Episode NEXT_IN chain when workstream archive or handoff needs macro digest; keep leaf Evidence pointers for citations.
+
+---
+
+### 2.14 Think-in-Memory (TiM) — `2311.08719` · **FULL**
+
+**Store reasoning outcomes**, not only raw dialogues. Ops: **insert / merge / forget**; LSH retrieve before generate; post-hoc reflection updates memory.
+
+**MoDeX.** Cognify may emit thought-like fields (`failed_approaches`, `next_steps`) as structured Episode slots; merge near-dup episode digests; forget only low-heat L2 under capacity — not Anchors.
+
+---
+
+### 2.15 MemoryBank — `2305.10250` · **FULL** (Zhong et al.)
+
+**Storage.** Daily conversations + event summaries + evolving user portraits.
+
+**Ebbinghaus updater.** Retention \(R=e^{-t/S}\) (paper form \(R=e^{-t/S}\)); memory strength \(S\) increases on recall/revisit; unused memories decay and may be forgotten for anthropomorphic companions.
+
+**MoDeX.** Use decay for **Heat/recency ranking and L2 eviction**, never as sole delete of Anchors or Tier-A judgments. Strength bump on hydrate hit ≈ MemoryOS \(N_{\mathrm{visit}}\).
+
+---
+
+### 2.16 A-MEM — `2502.12110` · **FULL**
+
+**Zettelkasten notes.** Each memory note links and **evolves on write** (not only at retrieval). Continuous memory evolution / adaptive management.
+
+**MoDeX.** Cognify timing: after Episode write, run association/evolution pass (entity links, near-dup merge candidates) — write-time organization. Evolution must use SUPERSEDES (P4), not silent overwrite.
+
+---
+
+### 2.17 Mem-α — `2509.25911` · **FULL**
+
+**Learned memory policy.** RL / preference optimization over when to store, update, forget — transfers from small train sets in paper setting.
+
+**MoDeX.** v1 = **heuristic** cognify policy (this doc). Mem-α motivates later `agents-cli eval optimize` over cognify prompts/thresholds — do not ship RL controller in Phase A/B.
+
+---
+
+### 2.18 Memory-R1 — `2508.19828` · **FULL**
+
+**Memory manager ops.** ADD / UPDATE / DELETE / NOOP with preference for UPDATE over DELETE+ADD. Learns *when to store*.
+
+**MoDeX.** Cognify→promotion: prefer UPDATE/SUPERSEDES; map DELETE→INVALIDATE+audit. “When to store” for L3 ≠ every Episode field — only promotion ladder.
+
+---
+
+### 2.19 MAGMA — `2601.03236` · **FULL**
+
+**Multi-graph / multi-aspect agent memory.** Separates episodic vs semantic structures; hierarchical/migrate patterns across graphs.
+
+**MoDeX.** Keep Episode graph (NEXT_IN, MENTIONS) separate from Anchor fact graph; migration STM→MTM→LTM is cross-layer, not flatten-to-one-KG.
+
+---
+
+### 2.20 StreamingLLM — `2309.17453` · **FULL**
+
+**Attention sinks.** Window attention collapses if first tokens evicted; keep **≥4 initial tokens** + recent window. Cache size ≠ monotonic perplexity gains.
+
+**MoDeX under pressure.** Pin: system instructions, workstream id, active constraints, WorkingState head. Evict middle episode digests first (also Lost-in-the-Middle). Cognify must externalize middle content to L2/L3 before window slide.
+
+---
+
+### 2.21 Lost in the Middle — `2307.03172` · **FULL**
+
+**U-shaped use of context.** Performance best when relevant info at **beginning or end**; middle degrades.
+
+**MoDeX packing (cognify output → L4).** Survival Anchors at **start**; WorkingState + next_step at **end**; episode digests only in middle if budget remains. Cognify summaries should be short enough that hydrate can place newest digest near edges.
+
+---
+
+### 2.22 MemOS — `2507.03724` · **FULL**
+
+**MemCube lifecycle.** Generated → Activated → Merged → Archived → Expired. Atomic metadata: provenance, origin, semantic type, timestamps, permissions.
+
+**Fuse / archive.** Consolidation is first-class OS operation, not ad-hoc summary.
+
+**MoDeX.** Episode status FSM: `open → sealed → archived`; cognify seals; sleep-time may merge; archive on workstream archive. MemCube fields → Episode + Observation provenance columns.
+
+---
+
+### 2.23 Unsupervised Dialogue Topic Segmentation — `2305.02747` · **FULL**
+
+**DialSTART.** Topic-aware utterance reps via neighboring utterance matching + pseudo-segmentation; combine with dialogue coherence; TextTiling-style cuts on similarity dips.
+
+**MoDeX.** Cheap soft detector: embedding discontinuity between consecutive Observation windows + Jaccard file/entity sets (no LLM).
+
+---
+
+### 2.24 HyperSeg — `2308.10464` · **FULL**
+
+**HDC topic segmentation.** Boundary score = cosine between surrounding utterance embeddings in hyperdimensional space; pick low-similarity boundaries; ~10× faster than neural baselines; improves downstream summarization.
+
+**MoDeX.** Optional CPU-cheap boundary scorer for IDE-side soft cuts when MI stats unavailable.
+
+---
+
+### 2.25 Granularity-Aware Dialogue Topic Segmentation — `2512.17083` · **FULL**
+
+**When F1 fails.** Topic-seg evaluation must be granularity-aware; over-segmentation vs under-segmentation trade off differently for summarization vs QA.
+
+**MoDeX eval.** Cognify fixtures must score both **over-cut** (too many tiny episodes) and **under-cut** (topic mix); do not optimize boundary F1 alone.
+
+---
+
+### 2.26 Generative Agents — `2304.03442` · **FULL** (supporting P2)
+
+**Importance accumulation → reflection.** When sum of importance since last reflection crosses threshold, consolidate memories into higher-level insights.
+
+**MoDeX.** Soft boundary / cognify trigger: `importance_sum ≥ EPISODE_IMPORTANCE_THRESHOLD` (default 3.5 with importance∈[0,1]) per workstream lock.
+
+---
+
+### 2.27 Mem0 — `2504.19413` · **FULL** (supporting — eager consolidation foil)
+
+**Eager extract every message pair** with ADD/UPDATE/DELETE/NOOP. RecMem/LightMem critique: costly.
+
+**MoDeX.** Do not cognify-every-turn; boundary + recurrence gated.
+
+---
+
+### 2.28 IMPLEMENTATION / hooks corpus — Claude+Cursor PRE_COMPACT docs · **FULL**
+
+**Hard boundary.** PreCompact / preCompact must cognify synchronously (best-effort): Anchors first, seal handoff, then allow compact. Exit-block only if emergency snapshot fails.
+
+**MoDeX.** Hard reasons: `PRE_COMPACT`, `SESSION_END`, `modex cognify|handoff`, workstream switch, idle ≥ `IDLE_BOUNDARY_MIN`.
+
+---
+
+## 3. Boundary policy (implement exactly)
+
+Aligned with `WORKSTREAM_AND_PROMOTION_V1` §3 and hooks §B5, reconciled with MemoryOS/Nemori/ES-Mem.
 
 ```text
-BoundaryKind = HARD | SOFT | NONE
+HARD (always cognify — ignore min_span for flush/seal; still extract Anchors):
+  PRE_COMPACT          # Claude PreCompact / Cursor preCompact
+  SESSION_END
+  explicit modex cognify | modex handoff
+  workstream_switch    # close old ws chapter; do not auto-join new
+  idle_gap ≥ IDLE_BOUNDARY_MIN   # default 25 min (lock); eng may use 45
 
-detect_boundary(obs, state) -> (BoundaryKind, reason):
-  # HARD — always cognify, even if span tiny
-  if obs.type in {pre_compact, session_end}:
-    return HARD, obs.type
-  if explicit_modex_cognify:
-    return HARD, "user_cognify"
+SOFT (cognify only if |span| ≥ min_span_events AND confidence high):
+  goal_shift                 # user intent materially changes
+  topic_discontinuity        # MemoryOS chain-reset; F_score < θ vs open segment
+  file_cluster_shift         # Jaccard(files) < 0.2 AND goal_shift
+  surprise / prediction_gap  # Nemori/EM-LLM; contradict WorkingState/Anchors
+  importance_sum ≥ EPISODE_IMPORTANCE_THRESHOLD
+  optional: MI quantile candidate + intent label (ES-Mem) if LLM path enabled
 
-  # SOFT — cognify only if min_span met
-  if workstream_switched(obs, state):
-    return SOFT, "workstream_switch"
-  if idle_gap(state.last_ts, obs.ts) > T_idle:
-    return SOFT, "idle_gap"
-  if topic_discontinuity(obs, state):          # see §3.1
-    return SOFT, "topic_shift"
-  if surprise_burst(obs, state):               # optional
-    return SOFT, "surprise"
-  return NONE, ""
+NEVER split on:
+  formatter/lint-only edits
+  trivial same-cluster file touch
+  short clarifications continuing same goal
+  routine tool noise
 
-# On HARD: always run cognify
-# On SOFT: run iff len(span) >= min_span OR files_in_flight delta large
-```
-
-### 3.1 Topic discontinuity (v1 practical stack)
-
-**v1 (no LLM required):**
-```text
-topic_discontinuity:
-  if MemoryOS-style F_score(page, open_segment) < θ_segment: true
-  if Jaccard(files_now, files_prev) < 0.15 and |files_now|>=2: true
-  if user_prompt matches /\b(anyway|unrelated|different topic|switch to)\b/i: true
-```
-
-**v1.5 (optional Loom):**
-```text
-label = LLM(window=last_user+last_agent, new=obs) in {continuous, partial_shift, discontinuous}
-seal if label != continuous
-```
-
-**v2 (ES-Mem-grade):**
-```text
-compute I_t MI sequence on topic embeddings
-candidates = bottom quantile q=0.35
-refine with intent LLM on ±L window; keep if p_eb > τ_intent
+NEVER create new workstream solely because of episode boundary.
 ```
 
 ---
 
-## 4. Cognify pipeline (canonical Phase C)
+## 4. Boundary detector pseudocode
 
 ```text
-cognify(workstream_id, kind, reason):
-  span = observations WHERE ws AND ts > last_boundary ORDER BY ts
-  if kind == SOFT and len(span) < min_span and not large_file_delta:
-    log boundary_skip; return
+function detect_boundary(obs, state) -> (kind, reason, confidence):
+  # ---- HARD ----
+  if obs.type in {PRE_COMPACT, SESSION_END}:
+    return HARD, obs.type, 1.0
+  if obs.type == EXPLICIT_COGNIFY or obs.type == HANDOFF_CMD:
+    return HARD, "explicit", 1.0
+  if obs.workstream_id != state.active_workstream_id:
+    return HARD, "workstream_switch", 1.0
+  if state.last_event_ts and (obs.ts - state.last_event_ts) >= IDLE_BOUNDARY_MIN:
+    return HARD, "idle_gap", 1.0
 
-  # --- L2 Episode ---
-  boundary_summary = render_boundary(reason, span)   # ES-Mem bref style
-  ep = Episode{
-    id, workstream_id, repo_fingerprint,
-    time_start: span[0].ts, time_end: span[-1].ts,
-    summary: digest(span),                 # deterministic v1; LLM optional
-    boundary_summary,
-    topic_keywords: keywords(span),
-    observation_ids: ids(span),
-    entity_ids: entities_from(span),
-    visibility: workstream_private,
-    status: active,
-    heat: init_heat(span),
-    created_at: now
-  }
+  # ---- SOFT features ----
+  conf = 0.0
+  reasons = []
+
+  if goal_shifted(obs, state.working):               # lexical/embed
+    conf += 0.45; reasons.append("goal_shift")
+
+  open_seg = state.open_segment_centroid
+  f = F_score(open_seg, obs)   # cos(e_s,e_p) + Jaccard(K_s,K_p)
+  if open_seg and f < θ_segment:
+    conf += 0.35; reasons.append("topic_discontinuity")
+
+  j = jaccard(state.files_in_flight, obs.files)
+  if j < FILE_CLUSTER_SHIFT_JACCARD and "goal_shift" in reasons:
+    conf += 0.20; reasons.append("file_cluster_shift")
+
+  if prediction_gap(obs, state.anchors, state.working) >= SURPRISE_GAP_MIN:
+    conf += 0.40; reasons.append("surprise")
+
+  if state.importance_sum_since_boundary >= EPISODE_IMPORTANCE_THRESHOLD:
+    conf += 0.30; reasons.append("importance")
+
+  # optional ES-Mem light path
+  if state.mi_enabled and mi_candidate(obs, state, q=q_MI):
+    conf += 0.15; reasons.append("mi_candidate")
+
+  if conf >= SOFT_BOUNDARY_CONF and not is_noise(obs):
+    return SOFT, join(reasons), conf
+  return NONE, "", 0.0
+
+
+function on_observation(obs):
+  append L0(obs)
+  patch_working_state(obs)            # P1
+  kind, reason, conf = detect_boundary(obs, state)
+  log_boundary_candidate(obs, kind, reason, conf)
+  if kind == HARD:
+    cognify(state.workstream_id, reason, hard=True)
+  elif kind == SOFT:
+    schedule_cognify(state.workstream_id, reason, hard=False)
+```
+
+---
+
+## 5. Exact MoDeX cognify algorithm
+
+```text
+function cognify(workstream_id, reason, hard=False):
+  span = SELECT observations
+         WHERE workstream_id = ? AND ts > last_boundary_ts
+         ORDER BY ts ASC
+
+  if not hard and len(span) < min_span_events:
+    return SKIPPED_MIN_SPAN
+
+  if not hard and is_noise_only(span):          # SCM-style skip
+    return SKIPPED_NOISE
+
+  # --- 1) Episode (L2) ---
+  ep = Episode(
+    id                = new_ulid("ep_"),
+    repo_fingerprint  = span.repo,
+    workstream_id     = workstream_id,
+    session_ids       = unique(span.session_id),
+    time_start        = span[0].ts,
+    time_end          = span[-1].ts,
+    branch            = mode(span.branch),
+    summary           = digest_v1(span),              # deterministic first
+    boundary_summary  = boundary_text(prev_ep, span), # ES-Mem-style ≤400 chars
+    topic_keywords    = keywords(span),               # for F_score later
+    files_touched     = top_files(span, 40),
+    failed_approaches = extract_failures(span),
+    next_steps        = extract_next(span),
+    observation_ids   = ids(span),                    # NON-LOSSY provenance
+    observation_span  = {from_ts, to_ts, count},
+    importance        = aggregate_importance(span),
+    heat              = init_heat(span),              # N_visit=0,L=|pages|
+    visibility        = workstream_private,
+    status            = sealed,
+    cognify_reason    = reason,
+    created_at        = now()
+  )
   INSERT ep
-  IF prev_ep: EDGE NEXT_IN(prev_ep → ep)
-  # Membox Trace Weaver analogue: link macro recurrence
-  link_traces(ep)   # optional: PARALLEL_WITH / CONTINUES workstream relations
+  EDGE NEXT_IN(prev_ep → ep) if prev_ep on same workstream
+  EDGE MENTIONS(ep → entities extracted)
 
-  # --- L3 promotion (orthogonal) ---
+  # --- 2) Segment accounting (MemoryOS-style open segment) ---
+  # If F_score(open_mtm_segment, ep) > θ_segment: merge keywords into segment
+  # else open new MTM segment bucket (metadata only; Episode remains row)
+
+  # --- 3) Promotion (do NOT auto-share) ---
   promotion.tier_A_B_C(span, ep)   # WORKSTREAM_AND_PROMOTION_V1
-  # RecMem: also scan subconscious clusters with θ_sim/θ_count → candidates
-  graph.associate(ep, new_anchors)  # DERIVES, ABOUT
+  # RecMem recurrence / Heat≥τ / prediction_gap → candidates (Tier B)
+  # Explicit remember / judgment language → Tier A commit
 
-  # --- Compose + seal L4 ---
-  view = compose.project(workstream_id)   # Layer-2; may include ConflictSets
-  seal.mxp(view, recipients=acl.members(ws), epoch++)
+  # --- 4) Write-time association (A-MEM timing) ---
+  graph.associate(ep)              # links; near-dup episode merge *proposal*
 
-  # --- L0 hygiene ---
-  mark span.compacted_at = now
-  rotate payload blobs per budget          # keep ids for Evidence
-  # NEVER delete Anchors; NEVER drop active constraints
+  # --- 5) Compose + seal ---
+  view = compose.project(workstream_id)   # P4 projection; no Layer-1 erase
+  seal.mxp(view, recipients=acl.members(workstream_id), epoch++)
 
-  write boundary_log{kind, reason, ep_id, span_n, duration_ms}
+  # --- 6) L0 hygiene ---
+  mark span compacted_at = now()
+  rotate_payload_blobs(span, budget)      # may drop heavy payloads
+  # NEVER delete Anchors here
+  # NEVER delete observation rows needed for provenance (payload OK to rotate)
+
+  state.last_boundary_ts = ep.time_end
+  state.importance_sum_since_boundary = 0
+  state.open_segment_centroid = refresh(ep)
+  INSERT boundary_log(...)
+  return ep
+
+
+function digest_v1(span) -> str:   # no LLM required
+  """
+  Episode {time_start}–{time_end} on {workstream}
+  Goal: {working.goal}
+  Files: {top files_in_flight}
+  Events: {counts by ObservationType}
+  Explicit remembers: {titles}
+  Tool failures: {summaries}
+  """
+  return truncate(template, episode_summary_max_chars)
+
+
+function sleep_time_cognify(workstream_id):   # LightMem / Cognitive Weave
+  # Offline: optional LLM narrative polish of sealed episodes;
+  # semantic refinement (RecMem); recursive SoS if episode_count > SoS_trigger;
+  # Heat eviction if MTM over capacity; promote Heat≥τ signals to Tier B.
+  ...
 ```
 
-### Deterministic digest (v1)
+### Pressure path (MemGPT × StreamingLLM × PRE_COMPACT)
+
 ```text
-Episode {time_start}–{time_end} · {workstream.slug}
-Boundary: {reason}
-Goal: {working.goal}
-Next: {working.next_step}
-Files: {top 8 files_in_flight}
-Event counts: {ObservationType → n}
-Explicit remembers: {remember statements}
-Tool failures: {summaries}
-Open questions: {working.open_questions}
+on_context_pressure(level):
+  if level >= 0.70: warn; favor soft cognify if importance high
+  if PRE_COMPACT or level >= 1.00:
+    cognify(..., hard=True)                 # MUST before eviction
+    pin = {system, workstream_id, active_constraints, working_head}  # ~sinks
+    evict_middle_episode_digests_from_context()
+    # IDE may now compact / FIFO flush ~50% non-pinned L1 queue
 ```
 
-### Boundary summary template (ES-Mem-inspired)
+### STM → MTM → LTM migration (MemoryOS adapted)
+
 ```text
-Topic/phase "{prev_topic}" ended ({reason}).
-Transitioned toward "{new_topic_or_goal}".
-Hot entities: {top entities}.
+L0/STM page full  → FIFO migrate oldest pages into cognify inbox (or wait boundary)
+boundary/cognify  → seal L2 Episode (MTM segment membership via F_score)
+Heat ≥ τ_heat     → Tier-B promotion signals toward L3 Anchors (LTM)
+L2 over capacity  → evict lowest Heat episodes to archive (status=archived)
+                    keep observation_ids pointers; drop bulky payloads only
 ```
 
 ---
 
-## 5. SQL
+## 6. Recommended constants
+
+| Name | Default | Source / notes |
+|------|---------|----------------|
+| `θ_segment` | **0.60** | MemoryOS \(\mathcal{F}_{\mathrm{score}}\) |
+| `α,β,γ` heat | **1.0, 1.0, 1.0** | start equal; TUNE after normalizing features |
+| `μ_recency` | **1e7** s | MemoryOS |
+| `τ_heat_promote` | **5** | MemoryOS → Tier B signal only |
+| `θ_sim` | **0.70** | RecMem / Nemori τ |
+| `θ_count` | **3** (eng) / 5 (casual chat) | RecMem; promotion lock uses 3 |
+| `q_MI` | **0.35** | ES-Mem candidate quantile |
+| `τ_c` intent | **0.5** (TUNE) | ES-Mem boundary confidence |
+| `min_span_events` | **8** | avoid tiny chapters |
+| `IDLE_BOUNDARY_MIN` | **25 min** | workstream lock (eng may raise to 45) |
+| `EPISODE_IMPORTANCE_THRESHOLD` | **3.5** | GenAgents-style; importance∈[0,1] |
+| `FILE_CLUSTER_SHIFT_JACCARD` | **0.2** | with goal_shift |
+| `SOFT_BOUNDARY_CONF` | **0.55** | detector sum threshold |
+| `SURPRISE_GAP_MIN` | **0.6** | normalized contradiction score |
+| `episode_summary_max_chars` | **500** recommended / **1200** hard | MEMORY_SCHEMAS_V1 |
+| `boundary_summary_max_chars` | **400** | ES-Mem anchor text |
+| `MTM_page_top_k` | **10** | MemoryOS retrieve |
+| `pressure_warn` | **0.70** | MemGPT |
+| `pressure_flush` | **1.00** → evict ~**50%** | MemGPT |
+| `attention_sinks_pin` | **4** conceptual slots | StreamingLLM |
+| `scm_summary_item_tok` | **800** | SCM |
+| `scm_summary_total_tok` | **2000** | SCM |
+| `graphiti_reflection_n` | **4** | prior msgs into cognify context |
+| `cognify_batch_hint` | **~20** events | MIRIX batching (P1) |
+| `SoS_trigger_episodes` | **12** | HEMA/RecSum offline hierarchy |
+| `sleep_time_cron` | offline / idle | LightMem |
+| `llm_topic_loom` / `llm_episode_digest` | **off** v1 | deterministic first |
+| `hard_boundaries` | PRE_COMPACT, SESSION_END, explicit, ws_switch, idle | never skip |
+
+---
+
+## 7. SQL — episodes + boundary_log
+
+Compatible with `MEMORY_SCHEMAS_V1` Episode object; additive columns for cognify ops.
 
 ```sql
-CREATE TABLE episodes (
-  id TEXT PRIMARY KEY,
-  workstream_id TEXT NOT NULL,
-  repo_fingerprint TEXT,
-  time_start TEXT NOT NULL,
-  time_end TEXT NOT NULL,
-  summary TEXT NOT NULL,
-  boundary_summary TEXT,
-  topic_keywords_json TEXT,
-  observation_ids_json TEXT NOT NULL,
-  entity_ids_json TEXT,
-  status TEXT DEFAULT 'active',          -- active|archived|expired
-  heat REAL DEFAULT 0,
-  n_visit INTEGER DEFAULT 0,
-  visibility TEXT DEFAULT 'workstream_private',
-  created_at TEXT NOT NULL
+-- L2 episodes (sealed chapters)
+CREATE TABLE IF NOT EXISTS episodes (
+  id                TEXT PRIMARY KEY,          -- ep_...
+  schema_version    TEXT NOT NULL DEFAULT 'modex.memory.v1',
+  repo_fingerprint  TEXT NOT NULL,
+  workstream_id     TEXT NOT NULL,
+  session_ids_json  TEXT NOT NULL DEFAULT '[]',
+  time_start        TEXT NOT NULL,             -- ISO-8601
+  time_end          TEXT NOT NULL,
+  branch            TEXT,
+  summary           TEXT NOT NULL,             -- ≤1200
+  boundary_summary  TEXT,                      -- ES-Mem ≤400
+  topic_keywords_json TEXT NOT NULL DEFAULT '[]',
+  failed_approaches_json TEXT NOT NULL DEFAULT '[]',
+  next_steps_json   TEXT NOT NULL DEFAULT '[]',
+  files_touched_json TEXT NOT NULL DEFAULT '[]',
+  anchor_ids_json   TEXT NOT NULL DEFAULT '[]',
+  entity_ids_json   TEXT NOT NULL DEFAULT '[]',
+  observation_ids_json TEXT NOT NULL DEFAULT '[]',
+  observation_count INTEGER NOT NULL DEFAULT 0,
+  salient_evidence_ids_json TEXT NOT NULL DEFAULT '[]',
+  importance        REAL NOT NULL DEFAULT 0.0,
+  -- MemoryOS heat components
+  n_visit           INTEGER NOT NULL DEFAULT 0,
+  n_pages           INTEGER NOT NULL DEFAULT 0,
+  last_access_ts    TEXT,
+  heat              REAL NOT NULL DEFAULT 0.0,
+  status            TEXT NOT NULL DEFAULT 'sealed',  -- open|sealed|archived
+  cognify_reason    TEXT NOT NULL,             -- PRE_COMPACT|idle_gap|...
+  visibility        TEXT NOT NULL DEFAULT 'workstream_private',
+  embedding         BLOB,                      -- optional narrative embed
+  created_at        TEXT NOT NULL,
+  updated_at        TEXT NOT NULL
 );
-CREATE INDEX ep_ws_time ON episodes(workstream_id, time_start);
 
-CREATE TABLE boundary_log (
-  id TEXT PRIMARY KEY,
-  workstream_id TEXT,
-  kind TEXT,                             -- HARD|SOFT|SKIP
-  reason TEXT,
-  episode_id TEXT,
-  span_n INTEGER,
-  ts TEXT,
-  meta_json TEXT
+CREATE INDEX IF NOT EXISTS idx_episodes_ws_time
+  ON episodes(workstream_id, time_end DESC);
+CREATE INDEX IF NOT EXISTS idx_episodes_heat
+  ON episodes(workstream_id, heat DESC);
+CREATE INDEX IF NOT EXISTS idx_episodes_status
+  ON episodes(status);
+
+-- NEXT_IN and MENTIONS live in edges table (P3); example:
+-- INSERT INTO edges(src_id, dst_id, rel, ...) VALUES (prev_ep, ep, 'NEXT_IN', ...);
+
+-- Boundary decisions (audit + eval)
+CREATE TABLE IF NOT EXISTS boundary_log (
+  id              TEXT PRIMARY KEY,            -- bl_...
+  repo_fingerprint TEXT NOT NULL,
+  workstream_id   TEXT NOT NULL,
+  obs_id          TEXT,                        -- triggering observation if any
+  ts              TEXT NOT NULL,
+  kind            TEXT NOT NULL,               -- HARD|SOFT|NONE|SKIPPED_MIN_SPAN|SKIPPED_NOISE
+  reason          TEXT NOT NULL,               -- PRE_COMPACT|topic_discontinuity|...
+  confidence      REAL NOT NULL DEFAULT 0.0,
+  features_json   TEXT NOT NULL DEFAULT '{}',  -- {f_score, jaccard_files, importance_sum, ...}
+  episode_id      TEXT,                        -- set if cognify ran
+  skipped         INTEGER NOT NULL DEFAULT 0,  -- 1 if cognify skipped
+  created_at      TEXT NOT NULL,
+  FOREIGN KEY (episode_id) REFERENCES episodes(id)
 );
 
--- optional macro traces (Membox Trace Weaver)
-CREATE TABLE episode_traces (
-  id TEXT PRIMARY KEY,
-  workstream_id TEXT,
-  label TEXT,
-  created_at TEXT
-);
-CREATE TABLE episode_trace_members (
-  trace_id TEXT,
-  episode_id TEXT,
-  PRIMARY KEY(trace_id, episode_id)
-);
+CREATE INDEX IF NOT EXISTS idx_boundary_ws_ts
+  ON boundary_log(workstream_id, ts DESC);
+CREATE INDEX IF NOT EXISTS idx_boundary_kind
+  ON boundary_log(kind, reason);
+```
+
+**Heat recompute (SQL-shaped):**
+
+```sql
+UPDATE episodes
+SET heat = (:alpha * n_visit)
+         + (:beta  * n_pages)
+         + (:gamma * EXP((JULIANDAY(last_access_ts) - JULIANDAY('now')) * 86400.0 / :mu)),
+    updated_at = :now
+WHERE id = :ep_id;
 ```
 
 ---
 
-## 6. Constants (start here)
+## 8. Eval fixtures for cognify
 
-| Name | Default | Source |
-|------|---------|--------|
-| `min_span` | 8 events | MoDeX / avoid tiny chapters |
-| `T_idle` | 45 min | engineering session gap |
-| `θ_segment` | 0.60 | MemoryOS F_score |
-| `q_MI` | 0.35 | ES-Mem bottom quantile |
-| `L_intent_window` | 2–3 turns | ES-Mem local refine |
-| `τ_intent` | 0.5 | TUNE |
-| `θ_sim` (RecMem) | 0.70 | RecMem LoCoMo |
-| `θ_count` (RecMem/Tier B) | **3** eng / 5 chat | denser coding → 3 |
-| `μ_recency` | 1e7 s | MemoryOS Heat |
-| `τ_heat` | 5 | MemoryOS → Tier B signal |
-| `episode_summary_max_chars` | 1600 | |
-| `boundary_summary_max_chars` | 400 | |
-| `hard_boundaries` | PRE_COMPACT, SESSION_END, user cognify | hooks lock |
-| `llm_topic_loom` | off in v1 | Membox optional |
-| `llm_episode_digest` | off in v1 | deterministic first |
-| `forget_curve_on_anchors` | **false** | MemoryBank decay ≠ Anchor delete |
+Place under `tests/fixtures/cognify/` (Phase A+). Each fixture is a JSONL observation stream + expected boundary/episode outcomes. Grade with boundary quality **and** downstream hydrate usefulness (granularity-aware — `2512.17083`).
 
----
+### 8.1 Fixture catalog
 
-## 7. Interaction with promotion & share
+| ID | Scenario | Expect |
+|----|----------|--------|
+| `C1_pre_compact_hard` | Mid-session PRE_COMPACT after 12 file_edits | HARD cognify; Anchors from explicit judgments persist; L0 marked compacted |
+| `C2_session_end` | SESSION_END with 3 events only | HARD cognify despite `< min_span`; seal handoff |
+| `C3_idle_gap` | 30 min idle then new USER_PROMPT | HARD `idle_gap`; new episode |
+| `C4_topic_shift_soft` | auth/* work → billing/* + goal text change | SOFT boundary; 2 episodes; no new workstream |
+| `C5_no_split_lint` | 15 formatter-only edits same goal | NO boundary; single open span |
+| `C6_workstream_switch` | `modex workstream use other` | HARD; old ws episode sealed; no cross-ws merge |
+| `C7_recurrence_promote` | Same rejection judgment in 3 sealed episodes | Tier-B candidate (≥θ_count); not `repo_shared_safe` |
+| `C8_prediction_gap` | WorkingState expects cookies; tests fail CSRF | Soft/surprise cognify; candidate invalidation |
+| `C9_min_span_skip` | Soft topic dip after 2 events | SKIPPED_MIN_SPAN; boundary_log row; no episode |
+| `C10_heat_evict` | MTM over capacity; one cold segment | Lowest Heat → `archived`; Anchors untouched |
+| `C11_pressure_flush` | Context 100% without PRE_COMPACT hook | Cognify then ~50% queue evict; sinks pinned |
+| `C12_digest_pack` | Hydrate after cognify with tight budget | Newest digest near pack edge; Anchors start; no middle-only critical constraints |
+| `C13_provenance` | Cognify then delete payload blobs | `observation_ids` remain; summary still cites span count |
+| `C14_overcut_guard` | Rapid tool noise with tiny embedding jitter | Must not emit >1 episode / 8 events (granularity) |
 
-| Signal | Cognify role | Share role |
-|--------|--------------|------------|
-| HARD boundary | Always flush episode | none |
-| Recurrence \(\theta_{count}\) | Episode + Anchor **candidates** | never auto-share |
-| Heat ≥ τ | Tier B promote signal | never auto-share |
-| Surprise / prediction gap | Soft cognify + candidate Anchors | never auto-share |
-| Explicit remember | May force mid-span Anchor without full cognify | share still explicit |
+### 8.2 Minimal fixture schema
 
----
+```json
+{
+  "id": "C4_topic_shift_soft",
+  "workstream_id": "ws_auth",
+  "observations": ["obs_....jsonl lines"],
+  "expect": {
+    "episodes": 2,
+    "workstreams": 1,
+    "boundaries": [
+      {"kind": "SOFT", "reason_contains": "goal_shift"},
+      {"kind": "HARD", "reason": "SESSION_END"}
+    ],
+    "invariants": [
+      "every episode has observation_ids non-empty",
+      "no episode.visibility == repo_shared_safe",
+      "anchors_from_tier_A status active"
+    ]
+  }
+}
+```
 
-## 8. Eval fixtures (cognify)
+### 8.3 Metrics
 
-1. **PreCompact flush:** force PRE_COMPACT mid-session → Episode+Anchors+`.mxp` exist even if transcript summary lossy.  
-2. **Topic pivot:** auth→unrelated docs edit → SOFT boundary; two episodes; rejection in ep1 still active.  
-3. **Idle gap:** 45m+ → new episode; CONTINUES relation.  
-4. **Tiny HARD:** SESSION_END with 2 events → still episode+seal.  
-5. **Recurrence promote:** same constraint phrasing in 3 episodes → Tier B candidate (not shareable).  
-6. **No eager LLM:** 100 file_edits → 0 LLM calls if loom/digest off; only boundary cognify.  
-7. **Boundary retrieve:** query “why not cookies?” hits `boundary_summary` / rejection Anchor without full L0.  
-8. **Fragmentation anti-test:** turn-chunk baseline vs episode baseline on temporal handoff Q.
+| Metric | Definition |
+|--------|------------|
+| Boundary precision/recall | vs human/tool-annotated cuts (DialSeg-style) |
+| Over-seg rate | episodes with `< min_span` except HARD |
+| Topic purity | mean intra-episode file Jaccard |
+| Provenance integrity | % episodes with resolvable observation_ids after payload rotate |
+| Promotion hygiene | Heat/recurrence never alone sets `shareable=true` |
+| Pack survival | critical constraints present after PRE_COMPACT fixture |
 
 ---
 
 ## 9. Anti-patterns
 
-1. Fixed every-N-turns episodes (ES-Mem failure mode).  
-2. One Observation = one L2 unit (Membox fragmentation).  
-3. LLM cognify every tool call (RecMem).  
-4. Delete Anchors on episode archive (use SUPERSEDES / status).  
-5. Apply forgetting-curve deletion to constraints (MemoryBank misuse).  
-6. Skip PRE_COMPACT cognify because “span small”.  
-7. Auto `repo_shared_safe` from Heat/recurrence.  
-8. Boundary without storing `boundary_summary` (loses ES-Mem retrieve win).
+1. **Cognify every turn** — Mem0/eager cost; RecMem shows ≤87% waste.  
+2. **Fixed every-N-turns episodes** — severs EST coherence (ES-Mem/Nemori).  
+3. **One Observation = one L2 atom** — Graphiti episode is a *span*, not a message.  
+4. **Drop L0 / skip Anchors on HARD PRE_COMPACT** — primary failure mode in IDE agents.  
+5. **Heat or recurrence auto-share to repo** — violates promotion ladder / shareable policy.  
+6. **LLM summary as only truth** without `observation_ids` — HEMA ablation: summary-only collapses.  
+7. **Forgetting-curve hard-delete of Anchors** — MemoryBank decay is ranking; use SUPERSEDES/archive.  
+8. **New workstream on every topic boundary** — contaminates identity model.  
+9. **Flat FIFO as sole long-term store** — MemoryOS critique of MemGPT-only designs.  
+10. **Bury cognify digests mid-pack as only carriers of constraints** — Lost in the Middle.  
+11. **Silent in-place episode overwrite** — A-MEM evolution must become append+merge proposal.  
+12. **Optimize boundary F1 only** — ignore granularity / hydrate utility (`2512.17083`).
 
 ---
 
-## 10. Recommended v1 rule set (punchline)
+## 10. Final cognify boundary rule set (lock summary)
 
 ```text
-HARD cognify: PRE_COMPACT | SESSION_END | modex cognify
-SOFT cognify: workstream_switch | idle>45m | F_score<0.60 | optional Loom shift
-Episode = {summary, boundary_summary, observation_ids, keywords, heat}
-LLM distill: OFF by default; ON for recurrence clusters (θ_sim=0.7, θ_count=3)
-After cognify: promote Tier A/B/C → compose → seal epoch++
-L0 rotate after; Anchors immortal until SUPERSEDES
+HARD = PRE_COMPACT | SESSION_END | explicit cognify/handoff
+     | workstream_switch | idle ≥ IDLE_BOUNDARY_MIN(25m)
+
+SOFT = (goal_shift ∧ span≥min_span)
+     | (topic_discontinuity F_score<θ_segment ∧ span≥min_span)
+     | (file_cluster Jaccard<0.2 ∧ goal_shift ∧ span≥min_span)
+     | (surprise/prediction_gap ≥ SURPRISE_GAP_MIN ∧ span≥min_span)
+     | (importance_sum ≥ 3.5 ∧ span≥min_span)
+
+COGNIFY =
+  seal Episode(digest_v1, boundary_summary, observation_ids, heat)
+  → NEXT_IN → promotion.tier_A_B_C → associate → compose.project → seal.mxp
+  → mark L0 compacted; never delete Anchors
+
+MIGRATE = STM FIFO → (boundary) MTM Episode segments(θ=0.6)
+        → Heat≥5 Tier-B signals → L3 candidates
+        → low Heat archive under capacity
+
+PRESSURE = warn@70% → HARD cognify@PRE_COMPACT/100% → pin sinks → evict middle
 ```
 
 ---
@@ -374,5 +781,5 @@ L0 rotate after; Anchors immortal until SUPERSEDES
 
 | Date | Change |
 |------|--------|
-| 2026-08-08 | Initial thin P2 synthesis. |
-| 2026-08-08 | Major expansion: ES-Mem, Membox, RecMem thresholds, MemoryBank, boundary detector + SQL + eval fixtures. |
+| 2026-08-08 | Initial P2 impl deep-read synthesis (short). |
+| 2026-08-08 | FULL-body expansion: 28 mechanism cards; boundary detector + cognify pseudocode; constants; SQL; eval fixtures; anti-patterns; inventory sync. |

@@ -18,8 +18,8 @@ What we *can* and *did* do:
 
 | Bucket | Approx count | Meaning |
 |--------|--------------|---------|
-| **FULL deep-read** | **~70+ distinct primary texts** | Full body mechanisms extracted into memos (incl. P3/P4 impl pass) |
-| **On-disk fulltext cache** | **112** files `>20KB` in `/tmp/modex-papers/full/` | Fetched bodies available for continued extraction |
+| **FULL deep-read** | **~90+ distinct primary texts** | Full body mechanisms extracted into memos (incl. P2/P3/P4 impl passes) |
+| **On-disk fulltext cache** | **120+** files `>20KB` in `/tmp/modex-papers/full/` | Fetched bodies available for continued extraction |
 | **Survey-indexed** | 150–300+ via survey bibliographies | Named + one-line role from surveys; not independently full-read |
 | **Stub / TODO** | remainder of agent-memory + crypto/auth literature | Queued for later FULL passes |
 
@@ -31,7 +31,7 @@ What we *can* and *did* do:
 |-----------------|---------|
 | `AGENT_MEMORY_CORPUS_DEEP_READ.md` | Graphiti/Zep, HippoRAG×2, A-MEM, Nemori, Mem0, MemGPT, GenAgents, RecMem, ES-Mem, EM-LLM, StateFuse, TOKI, LightRAG, GraphRAG, SSGM, surveys |
 | `IMPLEMENTATION_FROM_LITERATURE.md` | Cross-pillar Phase A–E algorithms/constants |
-| `impl/P2_EPISODE_COGNIFY.md` | **P2 expanded:** ES-Mem, Membox, RecMem thresholds, boundary detector + episode SQL |
+| `impl/P2_EPISODE_COGNIFY.md` | **P2 impl (28 FULL cards):** EST/boundaries, cognify, STM→MTM→LTM, Heat, surprise, recurrence, chapterization, SQL, eval fixtures |
 | `impl/P3_ANCHORS_GRAPH.md` | **P3 impl:** bi-temporal graph, entity resolve, PPR constants, promotion, edge schema + invalidation recipe |
 | `impl/P4_CONFLICT_COMPOSE.md` | **P4 impl:** SUPERSEDES algorithm, ConflictSet, compose projection, audit schema |
 | `impl/P5_HYDRATE_RETRIEVE.md` / `P6_PRIVACY_SEAL.md` | Hydrate scoring + Inv-Scope/seal recipes |
@@ -50,17 +50,17 @@ What we *can* and *did* do:
 
 | ID | Paper | Year | Memo |
 |----|-------|------|------|
-| 2501.13956 | Zep / Graphiti | 2025 | AGENT_MEMORY + **P3/P4** |
+| 2501.13956 | Zep / Graphiti | 2025 | AGENT_MEMORY + **P2/P3/P4** |
 | 2405.14831 | HippoRAG | 2024 | AGENT_MEMORY + **P3** |
 | 2502.14802 | HippoRAG 2 | 2025 | AGENT_MEMORY + **P3** |
-| 2502.12110 | A-MEM | 2025 | AGENT_MEMORY + **P3/P4** |
-| 2508.03341 | Nemori / What Deserves Memory | 2025–26 | AGENT_MEMORY + **P3** |
-| 2504.19413 | Mem0 / Mem0g | 2025 | AGENT_MEMORY + **P3/P4** |
-| 2310.08560 | MemGPT | 2023 | AGENT_MEMORY + **P3/P4** |
-| 2304.03442 | Generative Agents | 2023 | AGENT_MEMORY + **P3/P4** |
-| 2605.16045 | RecMem | 2026 | AGENT_MEMORY + **P3** |
-| 2601.07582 | ES-Mem | 2026 | AGENT_MEMORY + **P3** |
-| 2407.09450 | EM-LLM | 2024 | AGENT_MEMORY + **P3** |
+| 2502.12110 | A-MEM | 2025 | AGENT_MEMORY + **P2/P3/P4** |
+| 2508.03341 | Nemori / What Deserves Memory | 2025–26 | AGENT_MEMORY + **P2/P3** |
+| 2504.19413 | Mem0 / Mem0g | 2025 | AGENT_MEMORY + **P2/P3/P4** |
+| 2310.08560 | MemGPT | 2023 | AGENT_MEMORY + **P2/P3/P4** |
+| 2304.03442 | Generative Agents | 2023 | AGENT_MEMORY + **P2/P3/P4** |
+| 2605.16045 | RecMem | 2026 | AGENT_MEMORY + **P2/P3** |
+| 2601.07582 | ES-Mem | 2026 | AGENT_MEMORY + **P2/P3** |
+| 2407.09450 | EM-LLM | 2024 | AGENT_MEMORY + **P2/P3** |
 | 2607.05844 | StateFuse | 2026 | AGENT_MEMORY + PARALLEL + **P4** |
 | 2606.06240 | TOKI | 2026 | AGENT_MEMORY + PARALLEL + **P4** |
 | 2410.05779 | LightRAG | 2024 | AGENT_MEMORY + **P3** |
@@ -68,17 +68,29 @@ What we *can* and *did* do:
 | 2603.11768 | SSGM | 2026 | AGENT_MEMORY + **P3/P4** |
 | 2407.04363 | AriGraph | 2024 | **P3/P4** |
 | 2503.21322 | HyperGraphRAG | 2025 | **P3/P4** |
-| 2601.03236 | MAGMA | 2026 | **P3/P4** |
+| 2601.03236 | MAGMA | 2026 | **P2/P3/P4** |
 | 2506.07398 | G-Memory | 2025 | **P3/P4** |
 | 2402.11163 | KG-Agent | 2024 | **P3** |
 | 2408.00103 | ReLiK (EL + RE) | 2024 | **P3** |
 | 2603.15994 | Selective Memory / supersession chains | 2026 | PARALLEL + **P3/P4** |
-| 2506.06326 | MemoryOS | 2025 | **P3/P4** |
-| 2508.19828 | Memory-R1 | 2025 | **P3/P4** |
+| 2506.06326 | MemoryOS | 2025 | **P2/P3/P4** |
+| 2508.19828 | Memory-R1 | 2025 | **P2/P3/P4** |
 | 2510.10397 | AssoMem | 2025 | **P3/P4** |
-| 2510.18866 | LightMem | 2025 | **P3/P4** |
-| 2505.19549 | Multi-granularity conversational memory | 2025 | **P3** |
-| 2509.25911 | Mem-α | 2025 | **P3/P4** |
+| 2510.18866 | LightMem | 2025 | **P2/P3/P4** |
+| 2505.19549 | Multi-granularity conversational memory (MemGAS) | 2025 | **P2/P3** |
+| 2509.25911 | Mem-α | 2025 | **P2/P3/P4** |
+| 2507.03724 | MemOS | 2025 | **P2** |
+| 2305.10250 | MemoryBank (Zhong forgetting curve) | 2023–24 | **P2** |
+| 2304.13343 | SCM (Self-Controlled Memory) | 2023 | **P2** |
+| 2504.16754 | HEMA | 2025 | **P2** |
+| 2506.08098 | Cognitive Weave | 2025 | **P2** |
+| 2109.10862 | Recursive Summarizing Books | 2021 | **P2** |
+| 2311.08719 | Think-in-Memory (TiM) | 2023 | **P2** |
+| 2309.17453 | StreamingLLM | 2023 | **P1/P2** |
+| 2307.03172 | Lost in the Middle | 2023 | **P2/P5** |
+| 2305.02747 | Unsupervised Dialogue Topic Seg (DialSTART) | 2023 | **P2** |
+| 2308.10464 | HyperSeg (HDC topic seg) | 2023 | **P2** |
+| 2512.17083 | Granularity-Aware Dialogue Topic Seg | 2025 | **P2** |
 | 2512.13564 | Memory in the Age of AI Agents (survey) | 2025 | AGENT_MEMORY + **P3/P4** |
 | 2404.13501 | Zhang memory mechanisms survey | 2024 | AGENT_MEMORY |
 | 2411.00489 | AI Long-term Memory survey | 2024 | **P3/P4** |
@@ -176,6 +188,21 @@ Benchmark saturation, judge sensitivity, backbone-dependent accuracy, and memory
 | Version chain | superseded_by / supersedes | 2603.15994 |
 | Conflict pipeline order | conflict before near-dup | MemClaw |
 
+### 3.7 P2 cognify constants locked from FULL reads
+
+| Constant | Value | Source |
+|----------|-------|--------|
+| Segment join θ | 0.6 (cos+Jaccard) | MemoryOS |
+| Heat τ promote | 5 (Tier-B signal only) | MemoryOS |
+| Recency μ | 1e7 s | MemoryOS |
+| RecMem θ_sim / θ_count | 0.7 / 3 (eng) | RecMem + promotion lock |
+| ES-Mem MI quantile q | 0.35 | ES-Mem |
+| Nemori semantic τ | 0.70 | Nemori |
+| Pressure warn / flush | 70% / 100%→~50% | MemGPT |
+| Attention sinks pin | 4 conceptual slots | StreamingLLM |
+| IDLE_BOUNDARY_MIN | 25 min | WORKSTREAM lock |
+| HARD boundaries | PRE_COMPACT, SESSION_END, explicit, ws_switch, idle | hooks + P2 |
+
 ---
 
 ## 4. Survey-indexed corpus (named, not independently FULL-read)
@@ -225,3 +252,4 @@ When expanding this corpus:
 | 2026-08-08 | Initial honest inventory after first multi-cluster deep-read pass. |
 | 2026-08-08 | P3/P4 implementation pass: ≥55 FULL bodies; `impl/P3_ANCHORS_GRAPH.md` + `impl/P4_CONFLICT_COMPOSE.md`; expanded ledger (AriGraph, HyperGraphRAG, MAGMA, G-Memory, Selective Supersession, MemoryOS, Memory-R1, multi-agent frameworks, ReLiK, surveys). |
 | 2026-08-08 | P2 major expansion: ES-Mem (2601.07582), Membox (2601.03785), RecMem body thresholds, MemoryBank; cognify HARD/SOFT rules + `boundary_summary` + episode SQL. |
+| 2026-08-08 | P2 FULL deep-read pass: **28** mechanism cards in `impl/P2_EPISODE_COGNIFY.md` (~785 lines); ledger adds MemoryBank, SCM, HEMA, Cognitive Weave, RecSumBooks, TiM, StreamingLLM, Lost-in-Middle, MemOS, DialSTART, HyperSeg, GranularityTopicSeg; Graphiti/A-MEM/Nemori/… marked **P2**. |
