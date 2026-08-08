@@ -1511,20 +1511,24 @@ Use this as the quick constitution:
 - [x] Exact v1 schemas locked in `docs/MEMORY_SCHEMAS_V1.md`  
 - [x] Handoff budget defaults + drop order locked in schemas doc  
 - [x] Workstream identity + promotion signals locked in `docs/WORKSTREAM_AND_PROMOTION_V1.md`  
-- [ ] Next: parallel compose matrix, hook event mapping, `.mxp` key UX implementation choice  
+- [x] Parallel compose + hook event mapping locked in `docs/PARALLEL_COMPOSE_AND_HOOKS_V1.md`  
+- [x] `.mxp` crypto/key UX + shareable-anchor policy locked in `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md`  
+- [x] Deep-read research memos + corpus inventory under `docs/research/`  
 
 ---
 
 ## 18. Next design locks needed (not done yet)
 
 1. ~~Exact JSON schemas~~ → **done:** `docs/MEMORY_SCHEMAS_V1.md`  
-2. **`.mxp` implementation choice** (libsodium vs age-compatible wiring; key UX flows) — algo intent already locked in schemas  
+2. ~~`.mxp` implementation choice~~ → **done:** `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md` (age-shaped + libsodium XChaCha + Ed25519 StE)  
 3. ~~Workstream identity algorithm~~ → **done:** `docs/WORKSTREAM_AND_PROMOTION_V1.md`  
 4. ~~Promotion signal list~~ → **done:** same doc (Tier A/B/C + probation gate)  
 5. ~~Hydrate ranking / budgets~~ → defaults locked in schemas; may refine with benchmarks  
-6. **Conflict/compose rules** for parallel packs in one workstream  
-7. **IDE hook event minimum set** for v1 (start/stop/pre_compact/prompt/edit)  
-8. **Shareable-anchor policy** refinements beyond current `shareable` + visibility rules
+6. ~~Conflict/compose rules~~ → **done:** `docs/PARALLEL_COMPOSE_AND_HOOKS_V1.md`  
+7. ~~IDE hook event minimum set~~ → **done:** same doc (8-event min set)  
+8. ~~Shareable-anchor policy~~ → **done:** `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md` (`explicit_only`, Inv-Scope, unshare cascade)  
+9. **Optional remaining:** Antigravity/Windsurf adapter tables; Biscuits grant tokens; PQ recipient defaults; at-rest DB encryption  
+10. **Implementation Phase A** against locked schemas (private store, keys, remember/forget/status)
 
 ---
 
@@ -1597,3 +1601,5 @@ When architecture decisions change:
 | 2026-08-08 | Added §9A detailed runtime walkthrough: how L0–L4 and the temporal Anchor graph operate together on write, cognify, compact, and hydrate paths. |
 | 2026-08-08 | Locked exact v1 record schemas in `docs/MEMORY_SCHEMAS_V1.md` (Observation→Capability, HandoffPack, `.mxp`, budgets, invariants). |
 | 2026-08-08 | Locked workstream identity resolver + Anchor promotion signal catalog in `docs/WORKSTREAM_AND_PROMOTION_V1.md` (research-informed). |
+| 2026-08-08 | Locked parallel compose operators + IDE hook event mapping in `docs/PARALLEL_COMPOSE_AND_HOOKS_V1.md`. |
+| 2026-08-08 | Deep-read research pass: agent-memory corpus, sealed-pack crypto, shareable-anchor privacy (`docs/research/`); locked `.mxp` + shareable policy in `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md`. |
