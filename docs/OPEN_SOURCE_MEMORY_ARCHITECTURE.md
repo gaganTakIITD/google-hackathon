@@ -1510,7 +1510,8 @@ Use this as the quick constitution:
 - [x] Markdown allowed only as ephemeral authorized render  
 - [x] Exact v1 schemas locked in `docs/MEMORY_SCHEMAS_V1.md`  
 - [x] Handoff budget defaults + drop order locked in schemas doc  
-- [ ] Next: workstream identity algorithm, promotion signals, parallel compose matrix, hook event mapping  
+- [x] Workstream identity + promotion signals locked in `docs/WORKSTREAM_AND_PROMOTION_V1.md`  
+- [ ] Next: parallel compose matrix, hook event mapping, `.mxp` key UX implementation choice  
 
 ---
 
@@ -1518,12 +1519,12 @@ Use this as the quick constitution:
 
 1. ~~Exact JSON schemas~~ → **done:** `docs/MEMORY_SCHEMAS_V1.md`  
 2. **`.mxp` implementation choice** (libsodium vs age-compatible wiring; key UX flows) — algo intent already locked in schemas  
-3. **Workstream identity algorithm** (how to create/detect/name workstreams)  
-4. **Promotion signal list** (what may auto-become an Anchor vs explicit-only)  
+3. ~~Workstream identity algorithm~~ → **done:** `docs/WORKSTREAM_AND_PROMOTION_V1.md`  
+4. ~~Promotion signal list~~ → **done:** same doc (Tier A/B/C + probation gate)  
 5. ~~Hydrate ranking / budgets~~ → defaults locked in schemas; may refine with benchmarks  
 6. **Conflict/compose rules** for parallel packs in one workstream  
 7. **IDE hook event minimum set** for v1 (start/stop/pre_compact/prompt/edit)  
-8. **Shareable-anchor policy** (what can ever become `repo_shared_safe`)
+8. **Shareable-anchor policy** refinements beyond current `shareable` + visibility rules
 
 ---
 
@@ -1594,3 +1595,4 @@ When architecture decisions change:
 | 2026-08-08 | Initial synthesis from architecture/design conversation: problem framing, hooks+CLI lock, Anchor store lock, memory graph orchestration, handoff/workstream model, phased plan. |
 | 2026-08-08 | Privacy/access lock: capability-gated handoffs, non-discoverability defaults, sealed `.mxp` packs, reject markdown as canonical storage, private user store layout, grant/revoke CLI, phase plan reordered for sealed handoff. |
 | 2026-08-08 | Added §9A detailed runtime walkthrough: how L0–L4 and the temporal Anchor graph operate together on write, cognify, compact, and hydrate paths. |
+| 2026-08-08 | Locked exact v1 record schemas in `docs/MEMORY_SCHEMAS_V1.md` (Observation→Capability, HandoffPack, `.mxp`, budgets, invariants). |
