@@ -18,9 +18,14 @@ What we *can* and *did* do:
 
 | Bucket | Approx count | Meaning |
 |--------|--------------|---------|
-| **FULL deep-read** | ~56–66 distinct primary texts | Full body mechanisms extracted into memos (Batch 1 + Batch 2) |
-| **Survey-indexed** | 150–300+ via survey bibliographies | Named + one-line role from surveys; not independently full-read |
-| **Stub / TODO** | remainder of agent-memory + crypto/auth literature | Queued for later FULL passes |
+| **FULL deep-read** | ~70+ distinct primary texts (Batch 1+2 + pillar impl pass; growing) | Full body → mechanism cards + impl recipes |
+| **Survey seed IDs** | **~783 unique arXiv IDs** mined from survey HTML/PDF bodies | Systematic FULL-expansion queue |
+| **Survey-indexed** | 150–300+ named in bibliographies | One-line role until FULL |
+| **Stub / TODO** | remainder of seed + IFC/eval/RL-memory tail | Pillar agents continue |
+
+**User ask:** “200+ papers deep per architecture area.” We treat that as the **target expansion program**, not a fake completed claim. Implementation clarity is gated on FULL reads of load-bearing systems first, then breadth across the 783-ID seed.
+
+**Builder entrypoint:** `docs/IMPLEMENTATION_FROM_LITERATURE.md` + `docs/research/impl/P1…P6_*.md`
 
 ---
 
@@ -28,6 +33,8 @@ What we *can* and *did* do:
 
 | Memo / lock doc | Cluster |
 |-----------------|---------|
+| `IMPLEMENTATION_FROM_LITERATURE.md` | Cross-pillar algorithms, SQL, constants for Phase A–E |
+| `impl/P1…P6_*.md` | Capture, cognify, anchors, compose, hydrate, privacy/seal |
 | `AGENT_MEMORY_CORPUS_DEEP_READ.md` | Graphiti/Zep, HippoRAG×2, A-MEM, Nemori, Mem0, MemGPT, GenAgents, RecMem, ES-Mem, EM-LLM, StateFuse, TOKI, LightRAG, GraphRAG, SSGM, surveys |
 | `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md` | MemoryOS, LightMem, MAGMA, Memory-R1, ConfAIde, Fides, LoCoMo, MemoryAgentBench, AriGraph, Reflexion, Voyager skills, Collaborative Memory extras |
 | `SHAREABLE_ANCHOR_POLICY_RESEARCH.md` | MemClaw, AgentLeak, MAMA, MemLeak, PRISM, Collaborative Memory, VAULT, Miller/Spritely, ADR/QOC |
@@ -35,6 +42,7 @@ What we *can* and *did* do:
 | `PARALLEL_COMPOSE_AND_HOOKS_V1.md` §0 | StateFuse, TOKI, MemClaw, CRDT guides, Claude/Cursor hooks |
 | `WORKSTREAM_AND_PROMOTION_V1.md` | EST/ES-Mem, RecMem, importance/reflection |
 | `SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md` | Design lock synthesized from above |
+| `PILLAR_DEEP_READ_PLAN.md` | Pillar → research queue map |
 
 ---
 
@@ -66,6 +74,26 @@ What we *can* and *did* do:
 | 2602.19320 | Anatomy of Agentic Memory (survey) | 2026 | CORPUS extract |
 | 2605.06716 | From Storage to Experience (survey) | 2026 | CORPUS extract |
 | 2602.05665 | Graph-based Agent Memory survey | 2026 | CORPUS extract |
+| 2506.06326 | MemoryOS | 2025 | IMPLEMENTATION + P1/P2 |
+| 2507.03724 | MemOS | 2025 | IMPLEMENTATION (systems framing) |
+| 2507.07957 | MIRIX | 2025 | IMPLEMENTATION + P1/P5/P6 |
+| 2304.13343 | SCM Self-Controlled Memory | 2023/25 | P1 |
+| 2303.11366 | Reflexion | 2023 | P1 |
+| 2305.16291 | Voyager | 2023 | P1 procedural analogue |
+| 2310.11511 | Self-RAG | 2023 | P5 |
+| 2309.17453 | StreamingLLM | 2023 | P1/P5 inject |
+| 2507.02259 | MemAgent | 2025 | batch systems memo |
+| 2508.19828 | Memory-R1 | 2025 | batch systems memo |
+| 2510.18866 | LightMem | 2025 | batch systems memo |
+| 2402.17753 | LoCoMo / long-term conversational memory | 2024 | eval |
+| 2506.21605 | MemBench | 2025 | eval |
+| 2511.03506 | HaluMem | 2025 | eval |
+| 2507.05257 | MemoryAgentBench / incremental multi-turn | 2025 | eval |
+| 2505.19549 | Multi-granularity LTM association | 2025 | P5 |
+| 2506.08098 | Cognitive Weave | 2025 | batch |
+| 2403.16971 | AIOS | 2024 | P1 |
+| 2509.25911 | Mem-α | 2025 | batch |
+| 2305.14322 | RET-LLM | 2023 | P1 |
 | 2506.06326 | MemoryOS | 2025 | AGENT_MEMORY_BATCH2 |
 | 2510.18866 | LightMem | 2025 | AGENT_MEMORY_BATCH2 |
 | 2601.03236 | MAGMA | 2026 | AGENT_MEMORY_BATCH2 |

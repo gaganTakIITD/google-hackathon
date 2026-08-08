@@ -1528,7 +1528,8 @@ Use this as the quick constitution:
 7. ~~IDE hook event minimum set~~ → **done:** same doc (8-event min set)  
 8. ~~Shareable-anchor policy~~ → **done:** `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md` (`explicit_only`, Inv-Scope, unshare cascade)  
 9. **Optional remaining:** Antigravity/Windsurf adapter tables; Biscuits grant tokens; PQ recipient defaults; at-rest DB encryption  
-10. **Implementation Phase A** against locked schemas (private store, keys, remember/forget/status)
+10. **Implementation Phase A** against locked schemas (private store, keys, remember/forget/status)  
+11. **Implementation recipes from literature** → `docs/IMPLEMENTATION_FROM_LITERATURE.md` + `docs/research/impl/P1…P6_*.md` (deep-read driven; corpus seed ~783 arXiv IDs)
 
 ---
 
