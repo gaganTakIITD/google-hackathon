@@ -18,7 +18,7 @@ What we *can* and *did* do:
 
 | Bucket | Approx count | Meaning |
 |--------|--------------|---------|
-| **FULL deep-read** | ~45–55 distinct primary texts | Full body mechanisms extracted into memos |
+| **FULL deep-read** | ~56–66 distinct primary texts | Full body mechanisms extracted into memos (Batch 1 + Batch 2) |
 | **Survey-indexed** | 150–300+ via survey bibliographies | Named + one-line role from surveys; not independently full-read |
 | **Stub / TODO** | remainder of agent-memory + crypto/auth literature | Queued for later FULL passes |
 
@@ -29,6 +29,7 @@ What we *can* and *did* do:
 | Memo / lock doc | Cluster |
 |-----------------|---------|
 | `AGENT_MEMORY_CORPUS_DEEP_READ.md` | Graphiti/Zep, HippoRAG×2, A-MEM, Nemori, Mem0, MemGPT, GenAgents, RecMem, ES-Mem, EM-LLM, StateFuse, TOKI, LightRAG, GraphRAG, SSGM, surveys |
+| `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md` | MemoryOS, LightMem, MAGMA, Memory-R1, ConfAIde, Fides, LoCoMo, MemoryAgentBench, AriGraph, Reflexion, Voyager skills, Collaborative Memory extras |
 | `SHAREABLE_ANCHOR_POLICY_RESEARCH.md` | MemClaw, AgentLeak, MAMA, MemLeak, PRISM, Collaborative Memory, VAULT, Miller/Spritely, ADR/QOC |
 | `SEALED_PACK_CRYPTO_RESEARCH.md` | age, libsodium, Wormhole, MLS, Biscuits, Macaroons, StE guidance |
 | `PARALLEL_COMPOSE_AND_HOOKS_V1.md` §0 | StateFuse, TOKI, MemClaw, CRDT guides, Claude/Cursor hooks |
@@ -65,6 +66,15 @@ What we *can* and *did* do:
 | 2602.19320 | Anatomy of Agentic Memory (survey) | 2026 | CORPUS extract |
 | 2605.06716 | From Storage to Experience (survey) | 2026 | CORPUS extract |
 | 2602.05665 | Graph-based Agent Memory survey | 2026 | CORPUS extract |
+| 2506.06326 | MemoryOS | 2025 | AGENT_MEMORY_BATCH2 |
+| 2510.18866 | LightMem | 2025 | AGENT_MEMORY_BATCH2 |
+| 2601.03236 | MAGMA | 2026 | AGENT_MEMORY_BATCH2 |
+| 2508.19828 | Memory-R1 | 2025 | AGENT_MEMORY_BATCH2 |
+| 2407.04363 | AriGraph | 2024 | AGENT_MEMORY_BATCH2 |
+| 2303.11366 | Reflexion | 2023 | AGENT_MEMORY_BATCH2 |
+| 2305.16291 | Voyager (skill library) | 2023 | AGENT_MEMORY_BATCH2 |
+| 2402.17753 | LoCoMo benchmark | 2024 | AGENT_MEMORY_BATCH2 |
+| 2507.05257 | MemoryAgentBench | 2025 | AGENT_MEMORY_BATCH2 |
 
 ### Privacy / share / governance
 
@@ -75,7 +85,9 @@ What we *can* and *did* do:
 | ACL'26 | MAMA topology leakage | 2026 | SHAREABLE |
 | 2606.29788 | MemLeak | 2026 | SHAREABLE |
 | 2605.10614 | PRISM | 2026 | SHAREABLE |
-| 2505.18279 | Collaborative Memory | 2025 | SHAREABLE |
+| 2505.18279 | Collaborative Memory | 2025 | SHAREABLE + BATCH2 extras |
+| 2310.17884 | ConfAIde (contextual integrity) | 2023 | AGENT_MEMORY_BATCH2 |
+| 2505.23643 | Fides IFC | 2025 | AGENT_MEMORY_BATCH2 (was abstract-only in SHAREABLE) |
 | — | VAULT (eKNOW 2025) | 2025 | SHAREABLE |
 | — | Capability Myths Demolished | 2003 | SHAREABLE |
 | — | Spritely / OcapPub | 2023+ | SHAREABLE |
@@ -126,39 +138,44 @@ Benchmark saturation, judge sensitivity, backbone-dependent accuracy, and memory
 
 ## 4. Survey-indexed corpus (named, not independently FULL-read)
 
-These appear repeatedly across surveys and are **queued** for future FULL passes. One-line roles only until deep-read:
+These appear repeatedly across surveys and are **queued** for future FULL passes. One-line roles only until deep-read.
+*(Struck-through / removed from this stub list when promoted to §2 FULL ledger in Batch 2.)*
 
-| Paper / system | One-line role |
-|----------------|---------------|
-| Reflexion | Verbal self-critique as episodic journal |
-| Voyager | Procedural skill library as memory |
-| MemoryOS | OS-inspired hierarchical paging |
-| MAGMA | Multi-graph agent memory architecture |
-| LightMem | Lightweight memory-augmented generation |
-| Memory-R1 | RL-trained memory manage/utilize |
-| MemAgent | Multi-conv RL memory agent |
-| Omni memory | Personalized long-horizon self-evolving |
-| Agent KB | Cross-domain experience store |
-| AssoMem | Multi-signal associative retrieval |
-| Memento | Agent adaptation without LLM finetune |
-| HyperGraphRAG | Hypergraph knowledge representation |
-| AriGraph | World-model KG from observations |
-| Cognee | Queryable graph embeddings library |
-| OpenMemory / MemMachine / Memary | Graph memory toolkits |
-| LoCoMo / LongMemEval / MemoryAgentBench / MemoryArena / MemBench / RealMem | Evaluation suites |
-| RETRO / Memorizing Transformers / RMT | Neural parametric memory lineage |
-| Memory Networks / NTM / DNC | Classical differentiable memory |
-| ReAct | Trajectory-as-short-horizon-memory |
-| FLEX | Semantic gating for trajectory merge |
-| ConfAIde / CaMeL / Fides | Privacy/IFC related (partial in shareable memo) |
-| … | See bibliographies of 2512.13564, 2603.07670, 2602.05665 for the long tail |
+| Paper / system | One-line role | Status |
+|----------------|---------------|--------|
+| Reflexion | Verbal self-critique as episodic journal | **FULL → BATCH2** |
+| Voyager | Procedural skill library as memory | **FULL → BATCH2** |
+| MemoryOS | OS-inspired hierarchical paging | **FULL → BATCH2** |
+| MAGMA | Multi-graph agent memory architecture | **FULL → BATCH2** |
+| LightMem | Lightweight memory-augmented generation | **FULL → BATCH2** |
+| Memory-R1 | RL-trained memory manage/utilize | **FULL → BATCH2** |
+| AriGraph | World-model KG from observations | **FULL → BATCH2** |
+| LoCoMo | Very long-term conversational memory eval | **FULL → BATCH2** |
+| MemoryAgentBench | AR/TTL/LRU/SF memory-agent benchmark | **FULL → BATCH2** |
+| ConfAIde | Contextual integrity privacy benchmark | **FULL → BATCH2** |
+| Fides | IFC planner for AI agents | **FULL → BATCH2** |
+| MemAgent | Multi-conv RL memory agent | stub |
+| Omni memory | Personalized long-horizon self-evolving | stub |
+| Agent KB | Cross-domain experience store | stub |
+| AssoMem | Multi-signal associative retrieval | stub |
+| Memento | Agent adaptation without LLM finetune | stub |
+| HyperGraphRAG | Hypergraph knowledge representation | stub |
+| Cognee | Queryable graph embeddings library | stub |
+| OpenMemory / MemMachine / Memary | Graph memory toolkits | stub |
+| LongMemEval / MemoryArena / MemBench / RealMem | Evaluation suites (LoCoMo/MAB done) | stub |
+| RETRO / Memorizing Transformers / RMT | Neural parametric memory lineage | stub |
+| Memory Networks / NTM / DNC | Classical differentiable memory | stub |
+| ReAct | Trajectory-as-short-horizon-memory | stub |
+| FLEX | Semantic gating for trajectory merge | stub |
+| CaMeL (2503.18813) | Prompt-injection defense by design (Dual-LLM lineage) | stub — next privacy pass |
+| … | See bibliographies of 2512.13564, 2603.07670, 2602.05665 for the long tail | |
 
 **Next FULL-read batches (priority for engineering-memory product):**
-1. MemoryOS, LightMem, MAGMA, Memory-R1 (control + cost)
-2. ConfAIde, Fides, CaMeL (privacy IFC)
-3. LoCoMo + MemoryAgentBench conflict slices (eval design)
-4. AriGraph + HyperGraphRAG (graph update variants)
-5. Remaining MemClaw-cited leakage papers not yet FULL
+1. CaMeL (2503.18813) + remaining MemClaw-cited leakage papers not yet FULL
+2. HyperGraphRAG + RAPTOR + MemoryBank forgetting-curve details
+3. LongMemEval primary paper + MemoryArena / MemBench / RealMem
+4. MemAgent / MEM1 / Memento (RL / self-evolving controllers)
+5. High-citation write/read/forget systems still stubbed in 2512.13564 bibliography
 
 ---
 
@@ -179,3 +196,4 @@ When expanding this corpus:
 | Date | Change |
 |------|--------|
 | 2026-08-08 | Initial honest inventory after first multi-cluster deep-read pass. |
+| 2026-08-08 | Batch 2: +11 FULL deep-reads (MemoryOS, LightMem, MAGMA, Memory-R1, ConfAIde, Fides, LoCoMo, MemoryAgentBench, AriGraph, Reflexion, Voyager) + Collaborative Memory extras; memo `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md`. Fides upgraded from abstract-only. |

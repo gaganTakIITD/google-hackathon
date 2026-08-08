@@ -36,8 +36,9 @@
 
 | Source | Coverage |
 |--------|----------|
-| **Fides IFC** (arXiv:2505.23643) | Abstract + MemClaw citations; ar5iv HTML conversion failed |
-| **CaMeL / ConfAIde / MEXTRA** | Via MemClaw related-work + AgentLeak citations (not full primary) |
+| **Fides IFC** (arXiv:2505.23643) | **FULL** in `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md` (PDF); this memo originally abstract-only |
+| **ConfAIde** (arXiv:2310.17884) | **FULL** in BATCH2; CI tiers + leakage results |
+| **CaMeL / MEXTRA** | CaMeL (2503.18813) still stub; MEXTRA via MemClaw/AgentLeak citations |
 | **GraphRAG official privacy paper** | No dedicated privacy paper found; relied on VAULT + multi-tenant architecture notes |
 | **Patent US11120150 / US20260178391** | Patent abstracts + claims sections (not peer-reviewed theory) |
 | **Letta docs** | Official docs on core vs archival (post-MemGPT productization) |
