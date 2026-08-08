@@ -523,7 +523,7 @@ Canonical on-disk/exchange format. Not markdown.
 - hydrate requires principal key in `recipient_key_ids` (or derived capability path)
 - signature must verify `from_principal_id`
 
-> Crypto suite above is the **v1 intent lock**. Library choice can be libsodium/age-equivalent as long as recipient encryption + signature semantics hold.
+> Crypto suite above is the **v1 intent lock**. Implementation choice locked in `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md`: age-shaped multi-recipient envelope + libsodium-compatible X25519 wrap / XChaCha20-Poly1305 STREAM / Ed25519 sign-then-encrypt (MoDeX-native `.mxp` bytes; full age CLI wire-compat optional later).
 
 ---
 
