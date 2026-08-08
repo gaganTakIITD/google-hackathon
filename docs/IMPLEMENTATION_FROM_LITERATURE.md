@@ -369,7 +369,7 @@ CREATE INDEX cap_grantee_ws ON capabilities(grantee_principal_id, workstream_id)
 
 | Name | Value | From |
 |------|-------|------|
-| Recurrence promote | 3 | RecMem / MoDeX Tier B |
+| Recurrence promote | 3 | RecMem / Kedger Tier B |
 | Heat τ → persona/LPM | 5 | MemoryOS |
 | Core rewrite | 90% | MIRIX |
 | Segment score | cos+Jaccard > θ | MemoryOS |
@@ -377,7 +377,7 @@ CREATE INDEX cap_grantee_ws ON capabilities(grantee_principal_id, workstream_id)
 | User KB FIFO | 100 | MemoryOS |
 | Active retrieval | on | MIRIX |
 | Deny code | 404 | MemClaw |
-| Share mode | explicit_only | Collaborative Memory + MoDeX |
+| Share mode | explicit_only | Collaborative Memory + Kedger policy |
 | DELETE Anchors | forbidden (SUPERSEDE) | Graphiti/TOKI/StateFuse |
 | Seal revoke | reseal epoch++ | MLS |
 
