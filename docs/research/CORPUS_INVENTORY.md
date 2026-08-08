@@ -225,3 +225,4 @@ When expanding this corpus:
 |------|--------|
 | 2026-08-08 | Initial honest inventory after first multi-cluster deep-read pass. |
 | 2026-08-08 | Batch 2: +11 FULL deep-reads (MemoryOS, LightMem, MAGMA, Memory-R1, ConfAIde, Fides, LoCoMo, MemoryAgentBench, AriGraph, Reflexion, Voyager) + Collaborative Memory extras; memo `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md`. Fides upgraded from abstract-only. |
+| 2026-08-08 | Pillar impl pass: `IMPLEMENTATION_FROM_LITERATURE.md` + P1–P6 recipes; ~783 arXiv seed IDs inventoried; MemoryOS/MIRIX/MemOS mechanisms encoded as constants/SQL/pseudocode. |
