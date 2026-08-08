@@ -1508,17 +1508,19 @@ Use this as the quick constitution:
 - [x] Handoff is capability-gated / not world-discoverable  
 - [x] Canonical storage is sealed structured packs + private store (not markdown)  
 - [x] Markdown allowed only as ephemeral authorized render  
-- [ ] Next to lock in detail: crypto suite choice, workstream identity rules, exact schemas, hydrate ranking constants  
+- [x] Exact v1 schemas locked in `docs/MEMORY_SCHEMAS_V1.md`  
+- [x] Handoff budget defaults + drop order locked in schemas doc  
+- [ ] Next: workstream identity algorithm, promotion signals, parallel compose matrix, hook event mapping  
 
 ---
 
 ## 18. Next design locks needed (not done yet)
 
-1. **Exact JSON schemas** for Anchor, Evidence, Episode, WorkingState, HandoffPack, Graph Edge, Capability  
-2. **`.mxp` crypto suite** (e.g. age/libsodium recipient encryption + signature scheme) and key UX  
+1. ~~Exact JSON schemas~~ → **done:** `docs/MEMORY_SCHEMAS_V1.md`  
+2. **`.mxp` implementation choice** (libsodium vs age-compatible wiring; key UX flows) — algo intent already locked in schemas  
 3. **Workstream identity algorithm** (how to create/detect/name workstreams)  
 4. **Promotion signal list** (what may auto-become an Anchor vs explicit-only)  
-5. **Hydrate ranking function + numeric budgets**  
+5. ~~Hydrate ranking / budgets~~ → defaults locked in schemas; may refine with benchmarks  
 6. **Conflict/compose rules** for parallel packs in one workstream  
 7. **IDE hook event minimum set** for v1 (start/stop/pre_compact/prompt/edit)  
 8. **Shareable-anchor policy** (what can ever become `repo_shared_safe`)
