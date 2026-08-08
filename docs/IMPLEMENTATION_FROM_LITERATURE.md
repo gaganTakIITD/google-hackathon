@@ -104,48 +104,52 @@ Field-wise merge on parallel compose (union files/questions; conflict goals → 
 
 ## 4. L2 Episode cognify (boundaries)
 
-### Boundary detectors (OR of)
-1. `PRE_COMPACT` / `SESSION_END` — **hard** (hooks lock)  
-2. Workstream switch  
-3. Topic discontinuity (MemoryOS chain reset; Nemori/ES-Mem EST)  
-4. Prediction-gap / surprise (Nemori v4; EM-LLM) — optional  
-5. Idle gap > `T_idle`  
+> Full recipe: `docs/research/impl/P2_EPISODE_COGNIFY.md` (ES-Mem, Membox, RecMem, …).
+
+### Boundary detectors
+```text
+HARD (always): PRE_COMPACT | SESSION_END | modex cognify
+SOFT (if min_span): workstream_switch | idle>T_idle | F_score<θ_segment | optional Loom shift/surprise
+```
 
 ### Cognify algorithm
 ```text
-span = L0 rows since last episode boundary
-if |span| < min_span: skip (unless hard boundary)
-
+span = L0 since last boundary
+if SOFT and |span|<min_span: skip
 episode = {
-  summary: deterministic_or_llm_digest(span),
-  time_start, time_end,
-  entity_mentions[],
-  observation_ids[]
+  summary, boundary_summary,          # ES-Mem: boundaries are retrieve anchors
+  topic_keywords, observation_ids[],
+  heat, time_start, time_end
 }
-persist Episode
-run AnchorPromotion(span, episode)   # §5
-prune or recycle L0 pages for span   # keep ids if Evidence needs them
-bump Heat / recurrence counters
-compile L4 sealed pack (authorized recipients)
+NEXT_IN(prev→ep); optional macro traces (Membox Trace Weaver)
+promotion.tier_A_B_C(span, ep)        # RecMem recurrence → candidates only
+compose.project → seal.mxp(epoch++)
+mark L0 compacted; never delete Anchors
 ```
 
 ### Because
-- **Nemori/ES-Mem:** segment then summarize; hierarchical retrieve segment→page.  
-- **MemoryOS:** `F_score = cos(e_s,e_p) + Jaccard(K_s,K_p) > θ` merges pages into topic segments.  
-- **RecMem:** only escalate to LLM semantic consolidation under recurrence.
+- **Membox:** fragmentation–compensation fails; seal topic-continuous boxes at storage time.  
+- **ES-Mem:** MI/intent dynamic cuts + boundary text for coarse-to-fine retrieve.  
+- **RecMem:** \(\theta_{sim}=0.7\), \(\theta_{count}=5\) (chat) / **3** (eng); LLM only on recurrence.  
+- **MemoryOS:** Heat + segmented paging for migration/eviction ranking.
 
 ### Constants
 | Constant | Default | Notes |
 |----------|---------|-------|
-| `θ_segment` | 0.55–0.70 | MemoryOS-style; TUNE |
+| `θ_segment` | 0.60 | MemoryOS F_score |
+| `θ_sim` / `θ_count` | 0.70 / 3 | RecMem; eng denser than LoCoMo’s 5 |
+| `q_MI` | 0.35 | ES-Mem candidate quantile |
 | `min_span_events` | 8 | avoid tiny chapters |
-| `T_idle` | 30–45 min | engineering session gap |
-| `episode_summary_max_tokens` | 400 | |
+| `T_idle` | 45 min | engineering session gap |
+| `boundary_summary_max_chars` | 400 | |
+| `llm_topic_loom` / `llm_episode_digest` | off v1 | deterministic first |
 | `hard_boundaries` | PRE_COMPACT, SESSION_END | never skip |
 
 ### Do not
-- Delete losers of topic merge without keeping observation refs.  
-- Use community GraphRAG summaries as Anchor truth (GraphRAG deep-read).
+- Fixed every-N-turns episodes.  
+- One Observation = one L2 atom.  
+- Forgetting-curve **delete** on Anchors (MemoryBank decay is ranking-only).  
+- Auto-share from Heat/recurrence.
 
 ---
 
