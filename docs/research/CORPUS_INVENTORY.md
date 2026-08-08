@@ -18,8 +18,8 @@ What we *can* and *did* do:
 
 | Bucket | Approx count | Meaning |
 |--------|--------------|---------|
-| **FULL deep-read** | **~90+ distinct primary texts** | Full body mechanisms extracted into memos (incl. P2/P3/P4 impl passes) |
-| **On-disk fulltext cache** | **120+** files `>20KB` in `/tmp/modex-papers/full/` | Fetched bodies available for continued extraction |
+| **FULL deep-read** | **~100+ distinct primary texts** | Full body mechanisms extracted into memos (incl. P2–P5 + Batch 2/3) |
+| **On-disk fulltext cache** | **240+** files in `/tmp/modex-papers/full/` | Fetched bodies available for continued extraction |
 | **Survey-indexed** | 150–300+ via survey bibliographies | Named + one-line role from surveys; not independently full-read |
 | **Stub / TODO** | remainder of agent-memory + crypto/auth literature | Queued for later FULL passes |
 
@@ -30,6 +30,8 @@ What we *can* and *did* do:
 | Memo / lock doc | Cluster |
 |-----------------|---------|
 | `AGENT_MEMORY_CORPUS_DEEP_READ.md` | Graphiti/Zep, HippoRAG×2, A-MEM, Nemori, Mem0, MemGPT, GenAgents, RecMem, ES-Mem, EM-LLM, StateFuse, TOKI, LightRAG, GraphRAG, SSGM, surveys |
+| `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md` | MemoryOS, LightMem, MAGMA, Memory-R1, ConfAIde, Fides, LoCoMo, MemoryAgentBench, AriGraph, Reflexion, Voyager |
+| `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH3.md` | **15 new FULL + 3 re-read extras:** LTM Self-Evolution, LLM-Agents §memory, Memento, MemoryBench, ReasoningBank, MEM1, LEGOMem, MemAct, O-Mem, Agent KB, H-Mem, MemoChat, DialSim, Memory-as-a-Tool, Sleep-SCM (+ MemoryBank/SCM/TiM extras) |
 | `IMPLEMENTATION_FROM_LITERATURE.md` | Cross-pillar Phase A–E algorithms/constants |
 | `impl/P2_EPISODE_COGNIFY.md` | **P2 impl (28 FULL cards):** EST/boundaries, cognify, STM→MTM→LTM, Heat, surprise, recurrence, chapterization, SQL, eval fixtures |
 | `impl/P3_ANCHORS_GRAPH.md` | **P3 impl:** bi-temporal graph, entity resolve, PPR constants, promotion, edge schema + invalidation recipe |
@@ -80,12 +82,12 @@ What we *can* and *did* do:
 | 2505.19549 | Multi-granularity conversational memory (MemGAS) | 2025 | **P2/P3** |
 | 2509.25911 | Mem-α | 2025 | **P2/P3/P4** |
 | 2507.03724 | MemOS | 2025 | **P2** |
-| 2305.10250 | MemoryBank (Zhong forgetting curve) | 2023–24 | **P2** |
-| 2304.13343 | SCM (Self-Controlled Memory) | 2023 | **P2** |
+| 2305.10250 | MemoryBank (Zhong forgetting curve) | 2023–24 | **P2** + **BATCH3** |
+| 2304.13343 | SCM (Self-Controlled Memory) | 2023 | **P2** + **BATCH3** |
 | 2504.16754 | HEMA | 2025 | **P2** |
 | 2506.08098 | Cognitive Weave | 2025 | **P2** |
 | 2109.10862 | Recursive Summarizing Books | 2021 | **P2** |
-| 2311.08719 | Think-in-Memory (TiM) | 2023 | **P2** |
+| 2311.08719 | Think-in-Memory (TiM) | 2023 | **P2** + **BATCH3** |
 | 2309.17453 | StreamingLLM | 2023 | **P1/P2** |
 | 2307.03172 | Lost in the Middle | 2023 | **P2/P5** |
 | 2305.02747 | Unsupervised Dialogue Topic Seg (DialSTART) | 2023 | **P2** |
@@ -101,6 +103,26 @@ What we *can* and *did* do:
 | 2602.05665 | Graph-based Agent Memory survey | 2026 | CORPUS + **P3/P4** |
 | 2602.06052 | Agent Memory Second Half survey | 2026 | CORPUS (supporting) |
 | 2501.06322 | Multi-Agent Collaboration Mechanisms survey | 2025 | **P4** |
+| 2410.15665 | Long Term Memory: Foundation of AI Self-Evolution | 2024 | **BATCH3** |
+| 2309.07864 | Rise and Potential of LLM Agents (survey; §memory) | 2023 | **BATCH3** |
+| 2508.16153 | Memento (case-based M-MDP memory) | 2025 | **BATCH3** |
+| 2510.17281 | MemoryBench (continual feedback) | 2025 | **BATCH3** |
+| 2509.25140 | ReasoningBank + MaTTS | 2025 | **BATCH3** |
+| 2506.15841 | MEM1 (constant-size IS memory) | 2025 | **BATCH3** |
+| 2510.04851 | LEGOMem (modular procedural multi-agent) | 2025 | **BATCH3** |
+| 2510.12635 | Memory as Action / MemAct | 2025 | **BATCH3** |
+| 2511.13593 | O-Mem (omni persona/episodic/working) | 2025 | **BATCH3** |
+| 2507.06229 | Agent KB (cross-framework experience) | 2025 | **BATCH3** |
+| 2605.15701 | H-Mem (hybrid tree+graph) | 2026 | **BATCH3** |
+| 2308.08239 | MemoChat | 2023 | **BATCH3** |
+| 2406.13144 | DialSim / LongDialQA | 2024 | **BATCH3** |
+| 2601.05960 | Memory-as-a-Tool | 2026 | **BATCH3** |
+| 2604.20943 | Sleep-Consolidated Memory (preview) | 2026 | **BATCH3** |
+| 2401.18059 | RAPTOR | 2024 | **P5** |
+| 2504.18070 | PropRAG | 2025 | **P5** |
+| 2403.14403 | Adaptive-RAG | 2024 | **P5** |
+| 2410.10813 | LongMemEval | 2024 | **P5** / BATCH2 eval |
+| 2508.04903 | RCR-Router | 2025 | **P5** |
 
 ### Multi-agent frameworks (memory/sharing implications)
 
@@ -211,25 +233,26 @@ These appear repeatedly across surveys and are **queued** for future FULL passes
 
 | Paper / system | One-line role |
 |----------------|---------------|
-| Reflexion | Verbal self-critique as episodic journal |
-| Voyager | Procedural skill library as memory |
+| Reflexion / Voyager | FULL in Batch 2 — kept here only as survey cross-refs |
 | Cognee | Queryable graph embeddings library (docs/product; limited arXiv) |
 | OpenMemory / MemMachine / Memary | Graph memory toolkits |
-| LoCoMo / LongMemEval / MemoryAgentBench / MemoryArena / MemBench / RealMem | Evaluation suites |
+| LoCoMo / LongMemEval / MemoryAgentBench / MemoryArena / MemBench / RealMem | Evaluation suites — LoCoMo/LongMemEval/MemoryAgentBench/DialSim/MemoryBench now FULL |
 | RETRO / Memorizing Transformers / RMT | Neural parametric memory lineage |
 | Memory Networks / NTM / DNC | Classical differentiable memory (partial FULL above) |
 | ReAct | Trajectory-as-short-horizon-memory |
 | FLEX | Semantic gating for trajectory merge |
-| ConfAIde / CaMeL / Fides | Privacy/IFC related (partial in shareable memo) |
+| ConfAIde / CaMeL / Fides | ConfAIde + Fides FULL in Batch 2; CaMeL still queued |
 | Classic REBEL paper | Seq2seq RE; arXiv ID collision in fetch — use HippoRAG OpenIE practice for MoDeX v1 |
-| … | See bibliographies of 2512.13564, 2603.07670, 2602.05665 for the long tail |
+| MemU / Memobase | Product names; no matching arXiv primary papers found in Batch 3 search |
+| … | See bibliographies of 2512.13564, 2603.07670, 2602.05665, 2309.07864 for the long tail |
 
 **Next FULL-read batches (priority):**
-1. ConfAIde, Fides, CaMeL (privacy IFC)
-2. LoCoMo + MemoryAgentBench conflict slices (eval design)
-3. Cognee docs + remaining toolkit READMEs
-4. Remaining MemClaw-cited leakage papers not yet FULL
-5. Clean REBEL / Stanford OpenIE canonical PDFs (non-arXiv if needed)
+1. CaMeL (privacy IFC) — still queued after Batch 2
+2. Cognee docs + remaining toolkit READMEs (OpenMemory / MemMachine / Memary)
+3. Remaining MemClaw-cited leakage papers not yet FULL
+4. Clean REBEL / Stanford OpenIE canonical PDFs (non-arXiv if needed)
+5. Memento 2 (2512.22716) stateful reflective memory follow-on
+6. LongMemEval-V2 (2605.12493) if eng-colleague eval claims hold
 
 ---
 
@@ -251,5 +274,6 @@ When expanding this corpus:
 |------|--------|
 | 2026-08-08 | Initial honest inventory after first multi-cluster deep-read pass. |
 | 2026-08-08 | P3/P4 implementation pass: ≥55 FULL bodies; `impl/P3_ANCHORS_GRAPH.md` + `impl/P4_CONFLICT_COMPOSE.md`; expanded ledger (AriGraph, HyperGraphRAG, MAGMA, G-Memory, Selective Supersession, MemoryOS, Memory-R1, multi-agent frameworks, ReLiK, surveys). |
+| 2026-08-08 | **Batch 3:** 18 new FULL deep-reads in `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH3.md` (Memento, ReasoningBank, MEM1, LEGOMem, MemAct, O-Mem, Agent KB, MemoryBank, H-Mem, MemoryBench, DialSim, SCM, TiM, MemoChat, Memory-as-a-Tool, Sleep-SCM, LTM Self-Evolution, LLM-Agents survey §memory). P5 hydrate IDs (RAPTOR/PropRAG/Adaptive-RAG/RCR/LongMemEval) recorded in ledger. |
 | 2026-08-08 | P2 major expansion: ES-Mem (2601.07582), Membox (2601.03785), RecMem body thresholds, MemoryBank; cognify HARD/SOFT rules + `boundary_summary` + episode SQL. |
 | 2026-08-08 | P2 FULL deep-read pass: **28** mechanism cards in `impl/P2_EPISODE_COGNIFY.md` (~785 lines); ledger adds MemoryBank, SCM, HEMA, Cognitive Weave, RecSumBooks, TiM, StreamingLLM, Lost-in-Middle, MemOS, DialSTART, HyperSeg, GranularityTopicSeg; Graphiti/A-MEM/Nemori/… marked **P2**. |
