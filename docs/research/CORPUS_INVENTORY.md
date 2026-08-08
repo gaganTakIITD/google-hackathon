@@ -18,14 +18,10 @@ What we *can* and *did* do:
 
 | Bucket | Approx count | Meaning |
 |--------|--------------|---------|
-| **FULL deep-read** | ~70+ distinct primary texts (Batch 1+2 + pillar impl pass; growing) | Full body → mechanism cards + impl recipes |
-| **Survey seed IDs** | **~783 unique arXiv IDs** mined from survey HTML/PDF bodies | Systematic FULL-expansion queue |
-| **Survey-indexed** | 150–300+ named in bibliographies | One-line role until FULL |
-| **Stub / TODO** | remainder of seed + IFC/eval/RL-memory tail | Pillar agents continue |
-
-**User ask:** “200+ papers deep per architecture area.” We treat that as the **target expansion program**, not a fake completed claim. Implementation clarity is gated on FULL reads of load-bearing systems first, then breadth across the 783-ID seed.
-
-**Builder entrypoint:** `docs/IMPLEMENTATION_FROM_LITERATURE.md` + `docs/research/impl/P1…P6_*.md`
+| **FULL deep-read** | **~70+ distinct primary texts** | Full body mechanisms extracted into memos (incl. P3/P4 impl pass) |
+| **On-disk fulltext cache** | **112** files `>20KB` in `/tmp/modex-papers/full/` | Fetched bodies available for continued extraction |
+| **Survey-indexed** | 150–300+ via survey bibliographies | Named + one-line role from surveys; not independently full-read |
+| **Stub / TODO** | remainder of agent-memory + crypto/auth literature | Queued for later FULL passes |
 
 ---
 
@@ -33,18 +29,14 @@ What we *can* and *did* do:
 
 | Memo / lock doc | Cluster |
 |-----------------|---------|
-| `IMPLEMENTATION_FROM_LITERATURE.md` | Cross-pillar algorithms, SQL, constants for Phase A–E |
-| `impl/P1…P6_*.md` | Capture, cognify, anchors, compose, hydrate, privacy/seal |
-| `impl/P5_HYDRATE_RETRIEVE.md` | **26 FULL** — ranking formula, drop order, pack budgets, associative expand |
-| `impl/P6_PRIVACY_SEAL.md` | **22 FULL** — seal pipeline, Inv-Scope middleware, share redaction |
 | `AGENT_MEMORY_CORPUS_DEEP_READ.md` | Graphiti/Zep, HippoRAG×2, A-MEM, Nemori, Mem0, MemGPT, GenAgents, RecMem, ES-Mem, EM-LLM, StateFuse, TOKI, LightRAG, GraphRAG, SSGM, surveys |
-| `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md` | MemoryOS, LightMem, MAGMA, Memory-R1, ConfAIde, Fides, LoCoMo, MemoryAgentBench, AriGraph, Reflexion, Voyager skills, Collaborative Memory extras |
+| `impl/P3_ANCHORS_GRAPH.md` | **P3 impl:** bi-temporal graph, entity resolve, PPR constants, promotion, edge schema + invalidation recipe |
+| `impl/P4_CONFLICT_COMPOSE.md` | **P4 impl:** SUPERSEDES algorithm, ConflictSet, compose projection, audit schema |
 | `SHAREABLE_ANCHOR_POLICY_RESEARCH.md` | MemClaw, AgentLeak, MAMA, MemLeak, PRISM, Collaborative Memory, VAULT, Miller/Spritely, ADR/QOC |
 | `SEALED_PACK_CRYPTO_RESEARCH.md` | age, libsodium, Wormhole, MLS, Biscuits, Macaroons, StE guidance |
 | `PARALLEL_COMPOSE_AND_HOOKS_V1.md` §0 | StateFuse, TOKI, MemClaw, CRDT guides, Claude/Cursor hooks |
 | `WORKSTREAM_AND_PROMOTION_V1.md` | EST/ES-Mem, RecMem, importance/reflection |
 | `SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md` | Design lock synthesized from above |
-| `PILLAR_DEEP_READ_PLAN.md` | Pillar → research queue map |
 
 ---
 
@@ -54,71 +46,65 @@ What we *can* and *did* do:
 
 | ID | Paper | Year | Memo |
 |----|-------|------|------|
-| 2501.13956 | Zep / Graphiti | 2025 | AGENT_MEMORY |
-| 2405.14831 | HippoRAG | 2024 | AGENT_MEMORY |
-| 2502.14802 | HippoRAG 2 | 2025 | AGENT_MEMORY |
-| 2502.12110 | A-MEM | 2025 | AGENT_MEMORY |
-| 2508.03341 | Nemori / What Deserves Memory | 2025–26 | AGENT_MEMORY |
-| 2504.19413 | Mem0 | 2025 | AGENT_MEMORY |
-| 2310.08560 | MemGPT | 2023 | AGENT_MEMORY |
-| 2304.03442 | Generative Agents | 2023 | AGENT_MEMORY |
-| 2605.16045 | RecMem | 2026 | AGENT_MEMORY |
-| 2601.07582 | ES-Mem | 2026 | AGENT_MEMORY |
-| 2407.09450 | EM-LLM | 2024 | AGENT_MEMORY |
-| 2607.05844 | StateFuse | 2026 | AGENT_MEMORY + PARALLEL |
-| 2606.06240 | TOKI | 2026 | AGENT_MEMORY + PARALLEL |
-| 2410.05779 | LightRAG | 2024 | AGENT_MEMORY |
-| 2404.16130 | GraphRAG | 2024 | AGENT_MEMORY |
-| 2603.11768 | SSGM | 2026 | AGENT_MEMORY |
-| 2512.13564 | Memory in the Age of AI Agents (survey) | 2025 | AGENT_MEMORY |
+| 2501.13956 | Zep / Graphiti | 2025 | AGENT_MEMORY + **P3/P4** |
+| 2405.14831 | HippoRAG | 2024 | AGENT_MEMORY + **P3** |
+| 2502.14802 | HippoRAG 2 | 2025 | AGENT_MEMORY + **P3** |
+| 2502.12110 | A-MEM | 2025 | AGENT_MEMORY + **P3/P4** |
+| 2508.03341 | Nemori / What Deserves Memory | 2025–26 | AGENT_MEMORY + **P3** |
+| 2504.19413 | Mem0 / Mem0g | 2025 | AGENT_MEMORY + **P3/P4** |
+| 2310.08560 | MemGPT | 2023 | AGENT_MEMORY + **P3/P4** |
+| 2304.03442 | Generative Agents | 2023 | AGENT_MEMORY + **P3/P4** |
+| 2605.16045 | RecMem | 2026 | AGENT_MEMORY + **P3** |
+| 2601.07582 | ES-Mem | 2026 | AGENT_MEMORY + **P3** |
+| 2407.09450 | EM-LLM | 2024 | AGENT_MEMORY + **P3** |
+| 2607.05844 | StateFuse | 2026 | AGENT_MEMORY + PARALLEL + **P4** |
+| 2606.06240 | TOKI | 2026 | AGENT_MEMORY + PARALLEL + **P4** |
+| 2410.05779 | LightRAG | 2024 | AGENT_MEMORY + **P3** |
+| 2404.16130 | GraphRAG | 2024 | AGENT_MEMORY + **P3** |
+| 2603.11768 | SSGM | 2026 | AGENT_MEMORY + **P3/P4** |
+| 2407.04363 | AriGraph | 2024 | **P3/P4** |
+| 2503.21322 | HyperGraphRAG | 2025 | **P3/P4** |
+| 2601.03236 | MAGMA | 2026 | **P3/P4** |
+| 2506.07398 | G-Memory | 2025 | **P3/P4** |
+| 2402.11163 | KG-Agent | 2024 | **P3** |
+| 2408.00103 | ReLiK (EL + RE) | 2024 | **P3** |
+| 2603.15994 | Selective Memory / supersession chains | 2026 | PARALLEL + **P3/P4** |
+| 2506.06326 | MemoryOS | 2025 | **P3/P4** |
+| 2508.19828 | Memory-R1 | 2025 | **P3/P4** |
+| 2510.10397 | AssoMem | 2025 | **P3/P4** |
+| 2510.18866 | LightMem | 2025 | **P3/P4** |
+| 2505.19549 | Multi-granularity conversational memory | 2025 | **P3** |
+| 2509.25911 | Mem-α | 2025 | **P3/P4** |
+| 2512.13564 | Memory in the Age of AI Agents (survey) | 2025 | AGENT_MEMORY + **P3/P4** |
 | 2404.13501 | Zhang memory mechanisms survey | 2024 | AGENT_MEMORY |
-| 2603.07670 | Memory for Autonomous LLM Agents (survey) | 2026 | CORPUS (this file + extract) |
-| 2602.19320 | Anatomy of Agentic Memory (survey) | 2026 | CORPUS extract |
-| 2605.06716 | From Storage to Experience (survey) | 2026 | CORPUS extract |
-| 2602.05665 | Graph-based Agent Memory survey | 2026 | CORPUS extract |
-| 2506.06326 | MemoryOS | 2025 | IMPLEMENTATION + P1/P2 |
-| 2507.03724 | MemOS | 2025 | IMPLEMENTATION (systems framing) |
-| 2507.07957 | MIRIX | 2025 | IMPLEMENTATION + P1/P5/P6 |
-| 2304.13343 | SCM Self-Controlled Memory | 2023/25 | P1 |
-| 2303.11366 | Reflexion | 2023 | P1 |
-| 2305.16291 | Voyager | 2023 | P1 procedural analogue |
-| 2310.11511 | Self-RAG | 2023 | P5 |
-| 2309.17453 | StreamingLLM | 2023 | P1/P5 inject |
-| 2507.02259 | MemAgent | 2025 | batch systems memo |
-| 2508.19828 | Memory-R1 | 2025 | batch systems memo |
-| 2510.18866 | LightMem | 2025 | batch systems memo |
-| 2402.17753 | LoCoMo / long-term conversational memory | 2024 | eval |
-| 2506.21605 | MemBench | 2025 | eval |
-| 2511.03506 | HaluMem | 2025 | eval |
-| 2507.05257 | MemoryAgentBench / incremental multi-turn | 2025 | eval |
-| 2505.19549 | Multi-granularity LTM association | 2025 | P5 |
-| 2506.08098 | Cognitive Weave | 2025 | batch |
-| 2403.16971 | AIOS | 2024 | P1 |
-| 2509.25911 | Mem-α | 2025 | batch |
-| 2305.14322 | RET-LLM | 2023 | P1 |
-| 2506.06326 | MemoryOS | 2025 | AGENT_MEMORY_BATCH2 |
-| 2510.18866 | LightMem | 2025 | AGENT_MEMORY_BATCH2 |
-| 2601.03236 | MAGMA | 2026 | AGENT_MEMORY_BATCH2 |
-| 2508.19828 | Memory-R1 | 2025 | AGENT_MEMORY_BATCH2 |
-| 2407.04363 | AriGraph | 2024 | AGENT_MEMORY_BATCH2 |
-| 2303.11366 | Reflexion | 2023 | AGENT_MEMORY_BATCH2 |
-| 2305.16291 | Voyager (skill library) | 2023 | AGENT_MEMORY_BATCH2 |
-| 2402.17753 | LoCoMo benchmark | 2024 | AGENT_MEMORY_BATCH2 |
-| 2507.05257 | MemoryAgentBench | 2025 | AGENT_MEMORY_BATCH2 |
+| 2411.00489 | AI Long-term Memory survey | 2024 | **P3/P4** |
+| 2504.15965 | From Human Memory to AI Memory survey | 2025 | **P3** |
+| 2603.07670 | Memory for Autonomous LLM Agents (survey) | 2026 | CORPUS + **P3/P4** |
+| 2602.19320 | Anatomy of Agentic Memory (survey) | 2026 | CORPUS + **P4** |
+| 2605.06716 | From Storage to Experience (survey) | 2026 | CORPUS + **P3** |
+| 2602.05665 | Graph-based Agent Memory survey | 2026 | CORPUS + **P3/P4** |
+| 2602.06052 | Agent Memory Second Half survey | 2026 | CORPUS (supporting) |
+| 2501.06322 | Multi-Agent Collaboration Mechanisms survey | 2025 | **P4** |
+
+### Multi-agent frameworks (memory/sharing implications)
+
+| ID | Paper | Year | Memo |
+|----|-------|------|------|
+| 2308.00352 | MetaGPT | 2023 | **P4** |
+| 2307.07924 | ChatDev | 2023 | **P4** |
+| 2303.17760 | CAMEL | 2023 | **P4** |
+| 2308.08155 | AutoGen | 2023 | **P4** |
 
 ### Privacy / share / governance
 
 | ID | Paper | Year | Memo |
 |----|-------|------|------|
-| 2606.24535 | MemClaw / Governed Shared Memory | 2026 | SHAREABLE |
-| 2602.11510 | AgentLeak | 2026 | SHAREABLE |
-| ACL'26 / 2512.04668 | MAMA / Topology Matters | 2025–26 | SHAREABLE + P6 |
-| 2606.29788 | MemLeak | 2026 | SHAREABLE |
+| 2606.24535 | MemClaw / Governed Shared Memory | 2026 | SHAREABLE + **P3/P4** |
+| 2602.11510 | AgentLeak | 2026 | SHAREABLE + **P4** |
+| ACL'26 | MAMA topology leakage | 2026 | SHAREABLE |
+| 2606.29788 | MemLeak | 2026 | SHAREABLE + **P4** |
 | 2605.10614 | PRISM | 2026 | SHAREABLE |
-| 2505.18279 | Collaborative Memory | 2025 | SHAREABLE + BATCH2 extras |
-| 2310.17884 | ConfAIde (contextual integrity) | 2023 | AGENT_MEMORY_BATCH2 + P6 |
-| 2505.23643 | Fides IFC | 2025 | AGENT_MEMORY_BATCH2 + P6 (PDF FULL) |
-| 2503.18813 | CaMeL | 2025 | P6 |
+| 2505.18279 | Collaborative Memory | 2025 | SHAREABLE + **P3/P4** |
 | — | VAULT (eKNOW 2025) | 2025 | SHAREABLE |
 | — | Capability Myths Demolished | 2003 | SHAREABLE |
 | — | Spritely / OcapPub | 2023+ | SHAREABLE |
@@ -128,54 +114,22 @@ What we *can* and *did* do:
 
 | Source | Depth | Memo |
 |--------|-------|------|
-| C2SP age.md | Full | SEALED_PACK + P6 |
-| libsodium seal/box/sign | Full | SEALED_PACK + P6 |
-| Magic Wormhole protocols | Full | SEALED_PACK + P6 |
-| MLS RFC 9420 / 9750 | Substantial / FULL sections | SEALED_PACK + P6 |
-| Biscuits DESIGN+spec | Full | SEALED_PACK + P6 |
-| Macaroons NDSS 2014 | Full PDF | SEALED_PACK + P6 |
+| C2SP age.md | Full | SEALED_PACK |
+| libsodium seal/box/sign | Full | SEALED_PACK |
+| Magic Wormhole protocols | Full | SEALED_PACK |
+| MLS RFC 9420 / 9750 | Substantial | SEALED_PACK |
+| Biscuits DESIGN+spec | Full | SEALED_PACK |
+| Macaroons NDSS 2014 | Substantial | SEALED_PACK |
 | Claude Code hooks docs | Full | PARALLEL |
 | Cursor hooks docs | Full | PARALLEL |
 
-### P5 hydrate / retrieve / pack (2026-08-08 FULL)
+### Classical / supporting FULL (context only)
 
-| ID | Paper | Year | Memo |
-|----|-------|------|------|
-| 2401.18059 | RAPTOR | 2024 | P5 |
-| 2504.18070 | PropRAG | 2025 | P5 |
-| 2403.14403 | Adaptive-RAG | 2024 | P5 |
-| 2310.11511 | Self-RAG | 2023 | P5 |
-| 2305.06983 | FLARE / Active RAG | 2023 | P5 |
-| 2510.10397 | AssoMem | 2025 | P5 |
-| 2508.04903 | RCR-Router | 2025 | P5 |
-| 2307.03172 | Lost in the Middle | 2023 | P5 |
-| 2310.05736 | LLMLingua | 2023 | P5 |
-| 2310.06201 | Compressing Context (Selective Context) | 2023 | P5 |
-| 2310.04408 | RECOMP | 2023 | P5 |
-| 2312.03414 | Compressed Context Memory | 2023 | P5 |
-| 2101.06804 | What Makes Good In-Context Examples (KATE) | 2021 | P5 |
-| 2402.03367 | RAG-Fusion | 2024 | P5 |
-| 2406.14550 | GraphReader | 2024 | P5 |
-| 2410.10813 | LongMemEval | 2024 | P5 |
-| 2507.05257 | MemoryAgentBench | 2025 | P5 |
-| 2402.17753 | LoCoMo | 2024 | P5 |
-| 2601.06966 | RealMem | 2026 | P5 |
-
-*(HippoRAG×2, LightRAG, GraphRAG, GenAgents, MemGPT, A-MEM also FULL-re-read for hydrate algorithms — counted in P5 honesty table.)*
-
-### P6 privacy / seal additions (2026-08-08 FULL)
-
-| ID / Source | Paper | Year | Memo |
-|-------------|-------|------|------|
-| 2512.04668 | Topology Matters (MAMA) | 2025 | P6 |
-| 2310.17884 | ConfAIde | 2023 | P6 |
-| 2503.18813 | CaMeL | 2025 | P6 |
-| 2505.23643 | Fides IFC | 2025 | P6 |
-| 2309.04697 | SSE Leakage-Abuse Attacks | 2023 | P6 |
-| 2510.06719 | DP Synthetic Text for RAG | 2025 | P6 |
-| 2605.27825 | MRMMIA | 2026 | P6 |
-| SQLCipher | Encrypted SQLite design | — | P6 |
-| RFC 2693 | SPKI (re-confirmed FULL) | 1999 | P6 |
+| ID | Note | Memo |
+|----|------|------|
+| 1410.5401 | NTM | P3 supporting (not Anchor store) |
+| 1805.04263 / 2004.04906 / 2205.12674 | Memory-net / memorizing-transformer lineage | P3 supporting |
+| 2503.18813 / 2505.00675 / 2501.12948 | Additional fetched fulltexts used as supporting | P3/P4 |
 
 ---
 
@@ -205,49 +159,46 @@ Extract → integrate (conflict/prune) → retrieve (entity expand / BFS / PPR) 
 
 Benchmark saturation, judge sensitivity, backbone-dependent accuracy, and memory-maintenance latency often erase paper gains. MoDeX eval criteria (§15 architecture) must include **governance probes** (Inv-Scope, unshare cascade), not only Q&A recall.
 
+### 3.6 P3/P4 constants locked from FULL reads
+
+| Constant | Value | Source |
+|----------|-------|--------|
+| Synonym / ALIAS τ | 0.8 | HippoRAG / HippoRAG2 |
+| PPR damping | 0.5 | HippoRAG / HippoRAG2 |
+| Recognition top-k triples | 5 | HippoRAG2 |
+| Graphiti reflection window | n=4 | Zep/Graphiti |
+| Mem0 ops | ADD/UPDATE/DELETE/NOOP | Mem0 → MoDeX INVALIDATE |
+| Bi-temporal fields | valid/invalid + created/expired | Graphiti + TOKI |
+| Version chain | superseded_by / supersedes | 2603.15994 |
+| Conflict pipeline order | conflict before near-dup | MemClaw |
+
 ---
 
 ## 4. Survey-indexed corpus (named, not independently FULL-read)
 
-These appear repeatedly across surveys and are **queued** for future FULL passes. One-line roles only until deep-read.
-*(Struck-through / removed from this stub list when promoted to §2 FULL ledger in Batch 2.)*
+These appear repeatedly across surveys and are **queued** for future FULL passes. One-line roles only until deep-read:
 
-| Paper / system | One-line role | Status |
-|----------------|---------------|--------|
-| Reflexion | Verbal self-critique as episodic journal | **FULL → BATCH2** |
-| Voyager | Procedural skill library as memory | **FULL → BATCH2** |
-| MemoryOS | OS-inspired hierarchical paging | **FULL → BATCH2** |
-| MAGMA | Multi-graph agent memory architecture | **FULL → BATCH2** |
-| LightMem | Lightweight memory-augmented generation | **FULL → BATCH2** |
-| Memory-R1 | RL-trained memory manage/utilize | **FULL → BATCH2** |
-| AriGraph | World-model KG from observations | **FULL → BATCH2** |
-| LoCoMo | Very long-term conversational memory eval | **FULL → BATCH2** |
-| MemoryAgentBench | AR/TTL/LRU/SF memory-agent benchmark | **FULL → BATCH2** |
-| ConfAIde | Contextual integrity privacy benchmark | **FULL → BATCH2** |
-| Fides | IFC planner for AI agents | **FULL → BATCH2** |
-| MemAgent | Multi-conv RL memory agent | stub |
-| Omni memory | Personalized long-horizon self-evolving | stub |
-| Agent KB | Cross-domain experience store | stub |
-| AssoMem | Multi-signal associative retrieval | **FULL → P5** |
-| Memento | Agent adaptation without LLM finetune | stub |
-| HyperGraphRAG | Hypergraph knowledge representation | stub |
-| Cognee | Queryable graph embeddings library | stub |
-| OpenMemory / MemMachine / Memary | Graph memory toolkits | stub |
-| LongMemEval / RealMem | Eval suites | **FULL → P5** (MemoryArena still stub; MemBench in ledger) |
-| RETRO / Memorizing Transformers / RMT | Neural parametric memory lineage | stub |
-| Memory Networks / NTM / DNC | Classical differentiable memory | stub |
-| ReAct | Trajectory-as-short-horizon-memory | stub |
-| FLEX | Semantic gating for trajectory merge | stub |
-| CaMeL (2503.18813) | Prompt-injection defense by design | **FULL → P6** |
-| RAPTOR / PropRAG / Adaptive-RAG / FLARE / RCR-Router / Lost-in-Middle / packing suite | Hydrate/pack | **FULL → P5** |
-| … | See bibliographies of 2512.13564, 2603.07670, 2602.05665 for the long tail | |
+| Paper / system | One-line role |
+|----------------|---------------|
+| Reflexion | Verbal self-critique as episodic journal |
+| Voyager | Procedural skill library as memory |
+| Cognee | Queryable graph embeddings library (docs/product; limited arXiv) |
+| OpenMemory / MemMachine / Memary | Graph memory toolkits |
+| LoCoMo / LongMemEval / MemoryAgentBench / MemoryArena / MemBench / RealMem | Evaluation suites |
+| RETRO / Memorizing Transformers / RMT | Neural parametric memory lineage |
+| Memory Networks / NTM / DNC | Classical differentiable memory (partial FULL above) |
+| ReAct | Trajectory-as-short-horizon-memory |
+| FLEX | Semantic gating for trajectory merge |
+| ConfAIde / CaMeL / Fides | Privacy/IFC related (partial in shareable memo) |
+| Classic REBEL paper | Seq2seq RE; arXiv ID collision in fetch — use HippoRAG OpenIE practice for MoDeX v1 |
+| … | See bibliographies of 2512.13564, 2603.07670, 2602.05665 for the long tail |
 
-**Next FULL-read batches (priority for engineering-memory product):**
-1. Remaining MemClaw-cited leakage papers not yet FULL
-2. HyperGraphRAG + MemoryBank forgetting-curve details
-3. MemoryArena (remaining eval)
-4. MemAgent / MEM1 / Memento (RL / self-evolving controllers)
-5. High-citation write/read/forget systems still stubbed in 2512.13564 bibliography
+**Next FULL-read batches (priority):**
+1. ConfAIde, Fides, CaMeL (privacy IFC)
+2. LoCoMo + MemoryAgentBench conflict slices (eval design)
+3. Cognee docs + remaining toolkit READMEs
+4. Remaining MemClaw-cited leakage papers not yet FULL
+5. Clean REBEL / Stanford OpenIE canonical PDFs (non-arXiv if needed)
 
 ---
 
@@ -268,6 +219,4 @@ When expanding this corpus:
 | Date | Change |
 |------|--------|
 | 2026-08-08 | Initial honest inventory after first multi-cluster deep-read pass. |
-| 2026-08-08 | P5+P6 implementation pass: +26 P5 FULL, +22 P6 FULL (48 combined); added `impl/P5_HYDRATE_RETRIEVE.md`, `impl/P6_PRIVACY_SEAL.md`. |
-| 2026-08-08 | Batch 2: +11 FULL deep-reads (MemoryOS, LightMem, MAGMA, Memory-R1, ConfAIde, Fides, LoCoMo, MemoryAgentBench, AriGraph, Reflexion, Voyager) + Collaborative Memory extras; memo `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md`. Fides upgraded from abstract-only. |
-| 2026-08-08 | Pillar impl pass: `IMPLEMENTATION_FROM_LITERATURE.md` + P1–P6 recipes; ~783 arXiv seed IDs inventoried; MemoryOS/MIRIX/MemOS mechanisms encoded as constants/SQL/pseudocode. |
+| 2026-08-08 | P3/P4 implementation pass: ≥55 FULL bodies; `impl/P3_ANCHORS_GRAPH.md` + `impl/P4_CONFLICT_COMPOSE.md`; expanded ledger (AriGraph, HyperGraphRAG, MAGMA, G-Memory, Selective Supersession, MemoryOS, Memory-R1, multi-agent frameworks, ReLiK, surveys). |
