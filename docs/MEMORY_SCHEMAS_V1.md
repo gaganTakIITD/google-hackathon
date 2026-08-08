@@ -1,7 +1,8 @@
-# Memory Schemas v1 (Locked)
+# Kedger Memory Schemas v1 (Locked)
 
 > **Status:** Design lock — implementation constitution  
-> **Schema family:** `modex.memory.v1`  
+> **Product:** Kedger  
+> **Schema family:** `kedger.memory.v1`  
 > **Date:** 2026-08-08  
 > **Depends on:** `docs/OPEN_SOURCE_MEMORY_ARCHITECTURE.md`
 
@@ -112,7 +113,7 @@ Short-lived sensor record. Not durable memory by itself.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "obs_01HXYZ...",
   "type": "user_prompt",
   "ts": "2026-08-08T18:01:00Z",
@@ -148,7 +149,7 @@ One mutable document per workstream.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "wk_01HXYZ...",
   "workstream_id": "ws_01HXYZ...",
   "repo_fingerprint": "rf_...",
@@ -181,7 +182,7 @@ Compressed chapter created on boundary/cognify.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "ep_01HXYZ...",
   "repo_fingerprint": "rf_...",
   "workstream_id": "ws_...",
@@ -222,7 +223,7 @@ Compressed chapter created on boundary/cognify.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "anc_01HXYZ...",
   "kind": "rejection",
   "statement": "Do not use cookie sessions for auth",
@@ -277,7 +278,7 @@ Compressed chapter created on boundary/cognify.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "evd_01HXYZ...",
   "supports_anchor_id": "anc_...",
   "snippet": "CSRF failures reproduced on cookie session path in auth tests",
@@ -301,7 +302,7 @@ Compressed chapter created on boundary/cognify.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "ent_01HXYZ...",
   "entity_type": "file",
   "name": "auth/session.ts",
@@ -326,7 +327,7 @@ Compressed chapter created on boundary/cognify.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "eg_01HXYZ...",
   "edge_type": "ABOUT",
   "from_id": "anc_...",
@@ -371,7 +372,7 @@ Compressed chapter created on boundary/cognify.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "ws_01HXYZ...",
   "repo_fingerprint": "rf_...",
   "name": "auth-refactor",
@@ -394,7 +395,7 @@ Compressed chapter created on boundary/cognify.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "cap_01HXYZ...",
   "grantee_principal_id": "pr_gagan",
   "issuer_principal_id": "pr_maya",
@@ -423,7 +424,7 @@ Compressed chapter created on boundary/cognify.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "pr_01HXYZ...",
   "display_name": "Maya",
   "public_key": "base64...",
@@ -439,11 +440,11 @@ Compressed chapter created on boundary/cognify.
 
 ## 11. HandoffPack payload (L4 inner structured content)
 
-This is the **plaintext structured payload** before sealing into `.mxp`.
+This is the **plaintext structured payload** before sealing into `.kxp`.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "id": "hf_01HXYZ...",
   "repo_fingerprint": "rf_...",
   "workstream_id": "ws_...",
@@ -488,14 +489,14 @@ This is the **plaintext structured payload** before sealing into `.mxp`.
 
 ---
 
-## 12. Sealed pack envelope `.mxp` (outer)
+## 12. Sealed pack envelope `.kxp` (outer)
 
 Canonical on-disk/exchange format. Not markdown.
 
 ```json
 {
   "magic": "MXP1",
-  "schema_version": "modex.pack.v1",
+  "schema_version": "kedger.pack.v1",
   "handoff_id": "hf_...",
   "workstream_id": "ws_...",
   "repo_fingerprint": "rf_...",
@@ -523,7 +524,7 @@ Canonical on-disk/exchange format. Not markdown.
 - hydrate requires principal key in `recipient_key_ids` (or derived capability path)
 - signature must verify `from_principal_id`
 
-> Crypto suite above is the **v1 intent lock**. Implementation choice locked in `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md`: age-shaped multi-recipient envelope + libsodium-compatible X25519 wrap / XChaCha20-Poly1305 STREAM / Ed25519 sign-then-encrypt (MoDeX-native `.mxp` bytes; full age CLI wire-compat optional later).
+> Crypto suite above is the **v1 intent lock**. Implementation choice locked in `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md`: age-shaped multi-recipient envelope + libsodium-compatible X25519 wrap / XChaCha20-Poly1305 STREAM / Ed25519 sign-then-encrypt (Kedger-native `.kxp` bytes; full age CLI wire-compat optional later).
 
 ---
 
@@ -533,14 +534,14 @@ Not necessarily persisted as one row; defines cognify return contract.
 
 ```json
 {
-  "schema_version": "modex.memory.v1",
+  "schema_version": "kedger.memory.v1",
   "episode": {"$ref": "Episode"},
   "anchors_upserted": [{"$ref": "Anchor"}],
   "anchors_invalidated": ["anc_..."],
   "edges_upserted": [{"$ref": "GraphEdge"}],
   "working": {"$ref": "WorkingState"},
   "handoff": {"$ref": "HandoffPack"},
-  "sealed_pack_path": "packs/ws_.../hf_....mxp",
+  "sealed_pack_path": "packs/ws_.../hf_....kxp",
   "dropped_observation_count": 26
 }
 ```
@@ -579,7 +580,7 @@ Writers/readers must enforce:
 2. `status=superseded` ⇒ `invalid_at` and `superseded_by` set
 3. `shareable=true` ⇒ `visibility=repo_shared_safe`
 4. HandoffPack `content_hash` matches canonical JSON of payload
-5. `.mxp` signature verifies before decrypt use
+5. `.kxp` signature verifies before decrypt use
 6. Hydrate denied if principal not recipient/capability holder
 7. Workstream WorkingState cardinality = 1 active doc per `workstream_id`
 8. File entity names are repo-relative, never absolute machine paths
@@ -614,7 +615,7 @@ cap_...  maya grants gagan read_hydrate on workstream
 - [x] Graph Edge schema  
 - [x] Workstream / Principal / Capability schemas  
 - [x] HandoffPack payload schema  
-- [x] `.mxp` envelope schema + algo intent  
+- [x] `.kxp` envelope schema + algo intent  
 - [x] Budget constants + drop order  
 - [x] Validation invariants  
 

@@ -1,6 +1,7 @@
-# Sealed Packs (`.mxp`) & Shareable Anchors v1
+# Kedger Sealed Packs (`.kxp`) & Shareable Anchors v1
 
 > **Status:** Design lock (deep-read, research-informed)  
+> **Product:** Kedger  
 > **Date:** 2026-08-08  
 > **Depends on:** `OPEN_SOURCE_MEMORY_ARCHITECTURE.md`, `MEMORY_SCHEMAS_V1.md`, `WORKSTREAM_AND_PROMOTION_V1.md`, `PARALLEL_COMPOSE_AND_HOOKS_V1.md`  
 > **Research memos:** `docs/research/SEALED_PACK_CRYPTO_RESEARCH.md`, `docs/research/SHAREABLE_ANCHOR_POLICY_RESEARCH.md`, `docs/research/CORPUS_INVENTORY.md`  
@@ -8,14 +9,14 @@
 
 ---
 
-## PART A — `.mxp` implementation choice + key UX
+## PART A — `.kxp` implementation choice + key UX
 
 ### A1. Library / format decision (locked)
 
 | Choice | Decision |
 |--------|----------|
 | Envelope pattern | **Age-shaped multi-recipient file-key wrap** (N recipient stanzas → one file key → STREAM/AEAD payload) |
-| Wire compatibility | **MoDeX-native `.mxp`** for v1 (not required to decrypt with stock `age` CLI) |
+| Wire compatibility | **Kedger-native `.kxp`** for v1 (not required to decrypt with stock `age` CLI) |
 | Primitives | **libsodium / libsodium-compatible**: X25519 recipient wrap, **XChaCha20-Poly1305** payload AEAD (matches schema intent), **Ed25519** signatures |
 | Why not pure age bytes | age uses ChaCha20 (not XChaCha20) STREAM and has **no native signatures** |
 | Why not raw `crypto_box_seal` alone | Single-recipient + anonymous (no sender auth) + no streaming multi-recipient header |
@@ -36,7 +37,7 @@ context C = canonical(
 5. for each recipient R_i:
      stanza_i = X25519_wrap(file_key → R_i.public_key)        # ephemeral per stanza
 6. header_mac = MAC(header_without_mac, file_key)
-7. .mxp = magic || header(stanzas, meta, header_mac) || ciphertext
+7. .kxp = magic || header(stanzas, meta, header_mac) || ciphertext
 ```
 
 **Open order:** unwrap file_key → verify header MAC → decrypt → verify Ed25519 against **trusted** sender pk → accept.
@@ -52,23 +53,23 @@ context C = canonical(
 
 | Action | Required crypto effect |
 |--------|------------------------|
-| `modex grant` | Add principal to workstream ACL **and** include their X25519 key on next seal |
-| `modex handoff --share` | Seal/reseal pack with current recipient set (new `file_key`, `epoch++`) |
-| `modex revoke` | Remove from ACL; **reseal** live packs excluding them; mark old epochs `superseded` |
+| `kedger grant` | Add principal to workstream ACL **and** include their X25519 key on next seal |
+| `kedger handoff --share` | Seal/reseal pack with current recipient set (new `file_key`, `epoch++`) |
+| `kedger revoke` | Remove from ACL; **reseal** live packs excluding them; mark old epochs `superseded` |
 | Device loss | Revoke device keys; issue new principal keys; reseal; accept that offline copies encrypted to lost device remain readable to thief |
 
-Old `.mxp` files remain decryptable by anyone who still holds an old recipient private key. Product UX must say this clearly.
+Old `.kxp` files remain decryptable by anyone who still holds an old recipient private key. Product UX must say this clearly.
 
 ### A4. Key UX flows (locked for v1)
 
 ```text
-modex keys init                 # Ed25519 identity + X25519 recipient; store in OS keychain / passphrase-wrapped file
-modex keys export --recipient   # print/share age-like recipient string (mxp1… or age1… encoding TBD)
-modex keys import --from <file|wormhole>
-modex grant --workstream W --to <principal|recipient>
-modex revoke --workstream W --from <principal>
-modex handoff                   # compile + seal to current member recipient set
-modex hydrate --pack x.mxp      # unwrap if local sk ∈ recipients
+kedger keys init                 # Ed25519 identity + X25519 recipient; store in OS keychain / passphrase-wrapped file
+kedger keys export --recipient   # print/share age-like recipient string (mxp1… or age1… encoding TBD)
+kedger keys import --from <file|wormhole>
+kedger grant --workstream W --to <principal|recipient>
+kedger revoke --workstream W --from <principal>
+kedger handoff                   # compile + seal to current member recipient set
+kedger hydrate --pack x.kxp      # unwrap if local sk ∈ recipients
 ```
 
 | Flow | UX |
@@ -83,7 +84,7 @@ modex hydrate --pack x.mxp      # unwrap if local sk ∈ recipients
 
 ### A5. What crypto does not solve (product copy)
 
-Document in `modex doctor` / docs:
+Document in `kedger doctor` / docs:
 - Insider recipients can leak plaintext
 - Metadata (size, recipient count, timestamps, filenames) is visible
 - Unshare/revoke cannot erase already-hydrated ephemeral renders
@@ -111,7 +112,7 @@ share_mode = explicit_only   # v1 default
 
 | Signal | Auto → `repo_shared_safe`? |
 |--------|----------------------------|
-| Explicit `modex share` / `remember … --shareable` | **Yes** (after redaction gate) |
+| Explicit `kedger share` / `remember … --shareable` | **Yes** (after redaction gate) |
 | Recurrence ≥3 episodes (Tier B) | **No** — workstream only |
 | Importance / reflection threshold | **Never** — candidates only |
 | `goal` / `next_step` / `open_question` | **Never** |
@@ -136,7 +137,7 @@ From MemClaw live failure + Miller Property A:
 2. Deny with **404** (no existence oracle), not 403.  
 3. Partition indexes: `private_raw` / `workstream_private` / `repo_shared_safe`.  
 4. IDs are not capabilities.  
-5. `modex anchors --shared` lists only to repo-memory principals.  
+5. `kedger anchors --shared` lists only to repo-memory principals.  
 6. Git opt-in: redacted statements only; never Evidence or packs by default.  
 7. Pack compile includes shared Anchors only via **opt-in ranked facet**, budget-capped (anti PRISM amplification / pack deputy).
 
@@ -144,7 +145,7 @@ From MemClaw live failure + Miller Property A:
 
 | Step | Behavior |
 |------|----------|
-| `modex unshare <id>` | Clear `shareable`; demote visibility; audit event |
+| `kedger unshare <id>` | Clear `shareable`; demote visibility; audit event |
 | Facet model | Revoke **shared projection**; keep workstream-private source |
 | Cascade | Drop shared embeddings, hydrate caches; mark packs stale; optional reseal notice |
 | Prefer | `SUPERSEDES` + new shared Anchor over silent edit |
@@ -209,4 +210,4 @@ share.pack_include = opt_in_ranked
 
 | Date | Change |
 |------|--------|
-| 2026-08-08 | Initial design lock for `.mxp` crypto/key UX and shareable-anchor policy from deep-read research memos. |
+| 2026-08-08 | Initial design lock for `.kxp` crypto/key UX and shareable-anchor policy from deep-read research memos. |

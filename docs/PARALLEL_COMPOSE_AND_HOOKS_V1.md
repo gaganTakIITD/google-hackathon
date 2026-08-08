@@ -177,7 +177,7 @@ From MemClaw + TOKI + StateFuse:
 
 | Failure | Defence in our design |
 |---------|------------------------|
-| Unauthorized leakage | workstream capability + sealed `.mxp` recipients |
+| Unauthorized leakage | workstream capability + sealed `.kxp` recipients |
 | Stale propagation | temporal `invalid_at` + supersession chains |
 | Contradiction persistence (hidden) | explicit `disputed` / Conflict projection |
 | Provenance collapse | required provenance on Anchors; audit losers retained |
@@ -278,7 +278,7 @@ Actions:
    - Claude: `hookSpecificOutput.additionalContext`  
    - Cursor: sessionStart context injection mechanism / write secure temp only if needed  
 
-**Important (Cursor cloud caveat):** sessionStart may be deferred in some cloud environments; engine must also support explicit `modex hydrate` fallback.
+**Important (Cursor cloud caveat):** sessionStart may be deferred in some cloud environments; engine must also support explicit `kedger hydrate` fallback.
 
 #### USER_PROMPT
 Capture:
@@ -370,7 +370,7 @@ Agent A (Cursor)          Agent B (Claude)     same workstream
                   │
         compose projection (if parallel)
                   │
-        seal .mxp (recipients only)
+        seal .kxp (recipients only)
                   │
         next SESSION_START hydrate (authorized)
 ```

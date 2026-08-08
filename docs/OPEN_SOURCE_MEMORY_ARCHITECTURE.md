@@ -1,6 +1,7 @@
-# Open-Source Engineering Memory Architecture
+# Kedger — Open-Source Engineering Memory Architecture
 
 > **Status:** Design lock (conversation synthesis)  
+> **Product:** **Kedger** (locked)  
 > **Date:** 2026-08-08  
 > **Purpose:** Preserve the full product/architecture thinking for a generalized open-source memory + handoff system derived from MoDeX hackathon learnings — without requiring Fivetran, ADK, or BigQuery as core.  
 > **Audience:** Future implementers (including future chat sessions) who must not lose context.
@@ -20,8 +21,30 @@ Chat context is ephemeral. This file is the durable constitution for:
 7. **Privacy / access control** for handoff (not world-discoverable)
 8. **Sealed structured storage** (markdown is not the source of truth)
 9. Research influences and phased build plan
+10. The **product identity** (name, CLI, paths, pack format)
 
 If a future session contradicts this file, update this file deliberately — do not silently drift.
+
+---
+
+## 0A. Product identity lock — Kedger
+
+| Field | Lock |
+|-------|------|
+| **Product name** | **Kedger** |
+| **CLI binary** | `kedger` |
+| **Schema family** | `kedger.memory.v1` |
+| **User-private store** | `~/.kedger/` |
+| **Repo policy dir** | `<repo>/.kedger/` (pointers/policy only; no private payloads) |
+| **Sealed pack extension** | `.kxp` (Kedger sealed exchange pack) |
+| **Origin (historical)** | MoDeX hackathon prototype — not the OSS product name |
+| **New repository** | Separate from `google-hackathon`; implement Kedger there |
+
+**Etymology / metaphor:** a *kedge* is a small anchor used to warp a vessel into position; a **kedger** is the one who does that work. Product reading: carefully place Anchors, then pull continuity forward across sessions without dragging the whole sea of transcript.
+
+**Availability note (checked 2026-08-08):** GitHub username, npm, PyPI, crates.io, and `kedger.dev` / `.sh` / `.io` were clear at lock time.
+
+Research memos under `docs/research/` may still say “MoDeX” when mapping literature onto this architecture; treat that as **this system** (= Kedger), not as a second product.
 
 ---
 
@@ -108,7 +131,7 @@ Do **not** start as “enterprise shared brain + connectors + dashboard.”
 
 ### 2.3 Elevator pitch (OSS)
 
-> Open-source memory/handoff layer for AI coding agents. Local-first CLI engine + IDE hooks. Makes decisions, rejections, and session context durable across tools, sessions, branches, and teammates.
+> **Kedger** — open-source memory/handoff layer for AI coding agents. Local-first CLI engine + IDE hooks. Makes decisions, rejections, and session context durable across tools, sessions, branches, and teammates.
 
 ---
 
@@ -167,7 +190,7 @@ Human / Agent works
 ```text
 IDE hooks  ──(auto)──►  CLI engine  ──►  Memory store (Anchors+Evidence+graph)
                               │
-                              └── compile HandoffPack → .modex/handoff/...
+                              └── compile HandoffPack → .kedger/handoff/...
 ```
 
 | Piece | Lock |
@@ -626,16 +649,16 @@ function cognify(episode_span):
 Preferred v1 shape:
 
 ```text
-~/.modex/                                 # user-private by default (not in git)
+~/.kedger/                                 # user-private by default (not in git)
   keys/                                   # local keyring material (or OS keychain refs)
   projects/<repo_fingerprint>/
     store.sqlite                          # canonical structured store (optionally SQLCipher)
     raw/events.ring                       # ephemeral observations
-    packs/<workstream>/<handoff_id>.mxp   # sealed handoff packs
+    packs/<workstream>/<handoff_id>.kxp   # sealed handoff packs
     packs/<workstream>/HEAD               # pointer to current pack id
     acl/<workstream>.json                 # membership / capability policy (local)
 
-<repo>/.modex/                            # optional, minimal, mostly pointers/policy
+<repo>/.kedger/                            # optional, minimal, mostly pointers/policy
   project.json                            # repo id, policies, no private payloads
   .gitignore                              # deny packs/raw/store by default
 ```
@@ -674,7 +697,7 @@ HOOK EVENT
   (chapter)    (edges)       (active/superseded)
                    │
                    ▼
-            L4 HANDOFF PACK (.mxp sealed)
+            L4 HANDOFF PACK (.kxp sealed)
                    │
                    ▼
             AUTHORIZED HYDRATE
@@ -762,7 +785,7 @@ Meaning remains in Episode + Anchors.
 
 **Writes when:**
 
-- explicit `modex remember ...`, or
+- explicit `kedger remember ...`, or
 - strong judgment signals promoted during cognify, or
 - reflection finds repeated pattern across episodes
 
@@ -792,7 +815,7 @@ These are the compact-native survivors.
 #### L4 — Handoff surface (sealed projection)
 
 **Writes when:** after cognify / explicit handoff  
-**Form:** sealed `.mxp` compiled from:
+**Form:** sealed `.kxp` compiled from:
 
 1. ranked active Anchors (first)
 2. L1 working snapshot
@@ -1125,7 +1148,7 @@ It is a bad **source of truth** for handoff because:
 | Bad multi-agent merge | Diffing prose packs is lossy and unsafe |
 | Discoverability | World-readable filenames advertise active workstreams |
 
-**Lock:** canonical handoff storage is a **sealed structured pack** (`.mxp`), not `.md`.
+**Lock:** canonical handoff storage is a **sealed structured pack** (`.kxp`), not `.md`.
 
 ---
 
@@ -1186,9 +1209,9 @@ Capability
 Sharing is explicit:
 
 ```text
-modex grant --workstream auth-refactor --to gagan
-modex handoff --share gagan          # seal pack to grantee key(s)
-modex revoke --workstream auth-refactor --from gagan
+kedger grant --workstream auth-refactor --to gagan
+kedger handoff --share gagan          # seal pack to grantee key(s)
+kedger revoke --workstream auth-refactor --from gagan
 ```
 
 No capability ⇒ pack cannot be decrypted/hydrated, even if the file is copied.
@@ -1198,12 +1221,12 @@ This is the privacy tradeoff lock:
 - Easy continuity for people **on the task**
 - Hard/no continuity for everyone else
 
-### 11.5 Sealed pack format (`.mxp`) — canonical handoff storage
+### 11.5 Sealed pack format (`.kxp`) — canonical handoff storage
 
 Replace plaintext markdown/json handoff files with a sealed envelope:
 
 ```text
-.mxp (Modex Pack)
+.kxp (Kedger Pack)
 ├─ header (plaintext, minimal)
 │   - magic / schema_version
 │   - handoff_id / workstream_id / repo_fingerprint
@@ -1226,7 +1249,7 @@ Properties:
 
 - **Secure:** encrypted for recipients only  
 - **Meaningful:** structured Anchors preserve judgment under compact budgets  
-- **Handoff-easy:** one file can be copied/sent; recipient `modex hydrate --pack x.mxp`  
+- **Handoff-easy:** one file can be copied/sent; recipient `kedger hydrate --pack x.kxp`  
 - **Not broadly discoverable:** header reveals ids, not private reasoning  
 - **Integrity:** hash + signature  
 
@@ -1240,7 +1263,7 @@ Optional later: also encrypt local `store.sqlite` at rest (SQLCipher / OS keycha
 | Canonical handoff | **No** |
 | Git-committed project memory | **No** (by default) |
 | Ephemeral hydrate render for current agent | Yes, temp only |
-| `modex inspect --render md` for authorized user | Yes, explicit, local |
+| `kedger inspect --render md` for authorized user | Yes, explicit, local |
 
 ```text
 hydrate flow:
@@ -1256,15 +1279,15 @@ hydrate flow:
 By default:
 
 - Do **not** list other principals’ private workstreams to unauthorized users  
-- `modex status` shows only workstreams you can access  
+- `kedger status` shows only workstreams you can access  
 - Pack filenames should not require revealing sensitive titles in shared dirs  
-- Repo `.modex/` may store project policy only; private packs live under user store or sealed exchange  
+- Repo `.kedger/` may store project policy only; private packs live under user store or sealed exchange  
 
 Authorized listing:
 
 ```text
-modex workstreams          # only visible memberships
-modex handoff list         # only decryptable/readable packs
+kedger workstreams          # only visible memberships
+kedger handoff list         # only decryptable/readable packs
 ```
 
 ### 11.8 What may be broadly shared vs must stay sealed
@@ -1312,7 +1335,7 @@ This is intentional friction — and necessary trust.
 
 - [ ] Principal identity keys  
 - [ ] Workstream ACL / capabilities  
-- [ ] Sealed `.mxp` encrypt+sign  
+- [ ] Sealed `.kxp` encrypt+sign  
 - [ ] Redaction on ingest  
 - [ ] Default deny discoverability  
 - [ ] `grant` / `revoke`  
@@ -1327,35 +1350,35 @@ This is intentional friction — and necessary trust.
 ### 12.1 Daily / human
 
 ```text
-modex status
-modex handoff                 # compile sealed pack for current workstream
-modex hydrate                 # authorized hydrate only
-modex remember decision|reject|constraint "..."
-modex forget <id>
-modex why <entity|topic>
-modex grant --workstream <id> --to <principal>
-modex revoke --workstream <id> --from <principal>
+kedger status
+kedger handoff                 # compile sealed pack for current workstream
+kedger hydrate                 # authorized hydrate only
+kedger remember decision|reject|constraint "..."
+kedger forget <id>
+kedger why <entity|topic>
+kedger grant --workstream <id> --to <principal>
+kedger revoke --workstream <id> --from <principal>
 ```
 
 ### 12.2 Engine / hooks
 
 ```text
-modex ingest --from-hook
-modex cognify --boundary auto|stop|compact|idle
-modex doctor
-modex graph export|stats
+kedger ingest --from-hook
+kedger cognify --boundary auto|stop|compact|idle
+kedger doctor
+kedger graph export|stats
 ```
 
 ### 12.3 Power
 
 ```text
-modex graph path <a> <b>
-modex graph neighbors <entity> --depth 2
-modex hydrate --workstream <id>
-modex hydrate --pack <file.mxp>
-modex hydrate --pin <handoff_id>
-modex inspect --render md     # explicit authorized local render only
-modex keys ...
+kedger graph path <a> <b>
+kedger graph neighbors <entity> --depth 2
+kedger hydrate --workstream <id>
+kedger hydrate --pack <file.kxp>
+kedger hydrate --pin <handoff_id>
+kedger inspect --render md     # explicit authorized local render only
+kedger keys ...
 ```
 
 ### 12.4 Design rule
@@ -1425,7 +1448,7 @@ Memory/handoff is working when:
 7. Parallel workstreams do not contaminate each other  
 8. Multi-session lineage remains queryable via handoff relations  
 9. Unauthorized principal cannot list/decrypt another workstream handoff  
-10. Canonical packs are sealed `.mxp`; no plaintext markdown source-of-truth  
+10. Canonical packs are sealed `.kxp`; no plaintext markdown source-of-truth  
 
 Suggested fixture tests:
 
@@ -1447,13 +1470,13 @@ Suggested fixture tests:
 - L0 append + rotation + redaction
 - L1 working upsert
 - explicit Anchor remember/forget
-- principal key bootstrap (`modex keys`)
+- principal key bootstrap (`kedger keys`)
 - CLI: ingest, remember, status, doctor
 
 ### Phase B — Sealed handoff
 
 - compile structured HandoffPack
-- seal to `.mxp` (encrypt+sign)
+- seal to `.kxp` (encrypt+sign)
 - workstream ACL grant/revoke
 - authorized hydrate only
 - ephemeral render path (no markdown SoT)
@@ -1470,7 +1493,7 @@ Suggested fixture tests:
 - entity/anchor edges
 - conflict invalidation
 - ranked hydrate budget
-- `modex why`
+- `kedger why`
 
 ### Phase E — Hook packs
 
@@ -1494,6 +1517,7 @@ Use this as the quick constitution:
 
 - [x] Genuine problem = durable engineering judgment + handoff  
 - [x] OSS local-first direction  
+- [x] Product identity = **Kedger** (`kedger` CLI, `~/.kedger/`, `.kxp`)  
 - [x] v1 UX = IDE hooks; runtime = CLI engine  
 - [x] MCP / hosted sync / ADK / Fivetran not core  
 - [x] No user-facing capture-frequency matrix  
@@ -1512,7 +1536,7 @@ Use this as the quick constitution:
 - [x] Handoff budget defaults + drop order locked in schemas doc  
 - [x] Workstream identity + promotion signals locked in `docs/WORKSTREAM_AND_PROMOTION_V1.md`  
 - [x] Parallel compose + hook event mapping locked in `docs/PARALLEL_COMPOSE_AND_HOOKS_V1.md`  
-- [x] `.mxp` crypto/key UX + shareable-anchor policy locked in `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md`  
+- [x] `.kxp` crypto/key UX + shareable-anchor policy locked in `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md`  
 - [x] Deep-read research memos + corpus inventory under `docs/research/`  
 
 ---
@@ -1520,7 +1544,7 @@ Use this as the quick constitution:
 ## 18. Next design locks needed (not done yet)
 
 1. ~~Exact JSON schemas~~ → **done:** `docs/MEMORY_SCHEMAS_V1.md`  
-2. ~~`.mxp` implementation choice~~ → **done:** `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md` (age-shaped + libsodium XChaCha + Ed25519 StE)  
+2. ~~`.kxp` implementation choice~~ → **done:** `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md` (age-shaped + libsodium XChaCha + Ed25519 StE)  
 3. ~~Workstream identity algorithm~~ → **done:** `docs/WORKSTREAM_AND_PROMOTION_V1.md`  
 4. ~~Promotion signal list~~ → **done:** same doc (Tier A/B/C + probation gate)  
 5. ~~Hydrate ranking / budgets~~ → defaults locked in schemas; may refine with benchmarks  
@@ -1574,7 +1598,8 @@ Use this as the quick constitution:
 | Episode | Compressed chapter of work from a boundary |
 | Workstream | Logical task thread that owns continuity |
 | HandoffPack | Compiled boot image for next consumer |
-| `.mxp` | Sealed Modex Pack envelope (encrypt + sign + structured payload) |
+| Kedger | OSS product / CLI for this architecture (not MoDeX hackathon demo) |
+| `.kxp` | Sealed Kedger Pack envelope (encrypt + sign + structured payload) |
 | Principal | Authenticated developer/agent identity that can hold capabilities |
 | Capability | Grant to read/hydrate/append a workstream or pack |
 | Cognify | Transform raw/working span into graph + anchors + episode |
@@ -1598,10 +1623,11 @@ When architecture decisions change:
 | Date | Change |
 |------|--------|
 | 2026-08-08 | Initial synthesis from architecture/design conversation: problem framing, hooks+CLI lock, Anchor store lock, memory graph orchestration, handoff/workstream model, phased plan. |
-| 2026-08-08 | Privacy/access lock: capability-gated handoffs, non-discoverability defaults, sealed `.mxp` packs, reject markdown as canonical storage, private user store layout, grant/revoke CLI, phase plan reordered for sealed handoff. |
+| 2026-08-08 | Privacy/access lock: capability-gated handoffs, non-discoverability defaults, sealed `.kxp` packs, reject markdown as canonical storage, private user store layout, grant/revoke CLI, phase plan reordered for sealed handoff. |
 | 2026-08-08 | Added §9A detailed runtime walkthrough: how L0–L4 and the temporal Anchor graph operate together on write, cognify, compact, and hydrate paths. |
-| 2026-08-08 | Locked exact v1 record schemas in `docs/MEMORY_SCHEMAS_V1.md` (Observation→Capability, HandoffPack, `.mxp`, budgets, invariants). |
+| 2026-08-08 | Locked exact v1 record schemas in `docs/MEMORY_SCHEMAS_V1.md` (Observation→Capability, HandoffPack, `.kxp`, budgets, invariants). |
 | 2026-08-08 | Locked workstream identity resolver + Anchor promotion signal catalog in `docs/WORKSTREAM_AND_PROMOTION_V1.md` (research-informed). |
 | 2026-08-08 | Locked parallel compose operators + IDE hook event mapping in `docs/PARALLEL_COMPOSE_AND_HOOKS_V1.md`. |
-| 2026-08-08 | Deep-read research pass: agent-memory corpus, sealed-pack crypto, shareable-anchor privacy (`docs/research/`); locked `.mxp` + shareable policy in `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md`. |
+| 2026-08-08 | Deep-read research pass: agent-memory corpus, sealed-pack crypto, shareable-anchor privacy (`docs/research/`); locked `.kxp` + shareable policy in `docs/SEALED_PACKS_AND_SHAREABLE_ANCHORS_V1.md`. |
 | 2026-08-08 | Pillar deep-read campaign for implementation clarity: `IMPLEMENTATION_FROM_LITERATURE.md` + `research/impl/P1–P6` (MemoryOS/MIRIX/MemOS/Graphiti/Mem0/…); ~783-ID survey seed inventoried for continued FULL expansion. |
+| 2026-08-08 | **Product identity lock: Kedger.** CLI `kedger`, store `~/.kedger/`, pack `.kxp`, schema `kedger.memory.v1`. MoDeX retained as hackathon origin only. See §0A and `docs/KEDGER_NEW_REPO.md`. |

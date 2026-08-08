@@ -69,7 +69,7 @@ When a session starts or an event arrives, resolve workstream by first match:
 
 ```text
 1) Explicit
-   - user/agent sets --workstream / modex use <slug>
+   - user/agent sets --workstream / kedger use <slug>
    - pack hydrate declares workstream_id
 
 2) Active local binding
@@ -141,11 +141,11 @@ active → paused → archived
 Commands:
 
 ```text
-modex workstream new <slug> --goal "..."
-modex workstream use <slug>
-modex workstream switch <slug>
-modex workstream pause|archive <slug>
-modex workstream status
+kedger workstream new <slug> --goal "..."
+kedger workstream use <slug>
+kedger workstream switch <slug>
+kedger workstream pause|archive <slug>
+kedger workstream status
 ```
 
 ### 2.7 Auto-create heuristic (when no explicit slug)
@@ -190,7 +190,7 @@ Adopted from EST / Nemori / ES-Mem / EM-LLM, adapted for coding agents.
 
 1. `session_end` / `stop` with session terminating  
 2. `pre_compact` / context-pressure compact  
-3. explicit `modex handoff` / `modex cognify`  
+3. explicit `kedger handoff` / `kedger cognify`  
 4. workstream switch  
 5. idle gap ≥ `IDLE_BOUNDARY_MIN` (default 20–30 min)
 
@@ -255,7 +255,7 @@ Candidates live in a probation buffer (hot), not as active Anchors, until accept
 
 **A1. Explicit remember**
 ```text
-modex remember decision|reject|constraint|gotcha "..."
+kedger remember decision|reject|constraint|gotcha "..."
 ```
 
 **A2. Explicit judgment language from user**

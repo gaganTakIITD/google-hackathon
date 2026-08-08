@@ -29,7 +29,7 @@ If a constant is marked `TUNE`, start with the listed default and measure on han
 | **L2 Episodes** | Nemori/ES-Mem EST segments; MemoryOS MTM segments+pages; EM-LLM surprise boundaries; Graphiti episodes | Boundary → digest; keep provenance to L0 ids |
 | **L3 Anchors** | Mem0 facts; Graphiti edges; MIRIX Semantic/Episodic distilled; GenAgents reflections; A-MEM notes | Atomic, bi-temporal, SUPERSEDES not DELETE |
 | **Evidence** | Graphiti episode→entity edges; HippoRAG passages; MIRIX Resource details | Budgeted; detachable; never required for Anchor meaning |
-| **L4 Handoff** | MemGPT compile to main; StateFuse projection; MIRIX Active Retrieval pack into system prompt | Ranked projection; sealed `.mxp`; cannot rewrite L3 |
+| **L4 Handoff** | MemGPT compile to main; StateFuse projection; MIRIX Active Retrieval pack into system prompt | Ranked projection; sealed `.kxp`; cannot rewrite L3 |
 | **Workstream** | StateFuse namespaces; MemClaw fleet/scope; Collaborative Memory user partitions | Primary continuity key |
 | **Shareable** | Collaborative Memory shared tier; MIRIX marketplace vision (caution); ADR Accepted | Orthogonal ladder; `explicit_only` |
 
@@ -108,7 +108,7 @@ Field-wise merge on parallel compose (union files/questions; conflict goals → 
 
 ### Boundary detectors
 ```text
-HARD (always): PRE_COMPACT | SESSION_END | modex cognify
+HARD (always): PRE_COMPACT | SESSION_END | kedger cognify
 SOFT (if min_span): workstream_switch | idle>T_idle | F_score<θ_segment | optional Loom shift/surprise
 ```
 
@@ -123,7 +123,7 @@ episode = {
 }
 NEXT_IN(prev→ep); optional macro traces (Membox Trace Weaver)
 promotion.tier_A_B_C(span, ep)        # RecMem recurrence → candidates only
-compose.project → seal.mxp(epoch++)
+compose.project → seal.kxp(epoch++)
 mark L0 compacted; never delete Anchors
 ```
 
@@ -339,7 +339,7 @@ From MemBench / MemoryAgentBench / LoCoMo / HaluMem / ArgusFleet lessons:
 ## 10. Phase A code skeleton (what to build first)
 
 ```text
-modex/
+kedger/
   store/sqlite.py          # L0–L3 tables + indexes
   redact.py
   keys.py                  # Ed25519 + X25519; keychain
@@ -347,7 +347,7 @@ modex/
   remember.py              # explicit Anchor upsert
   cognify.py               # boundary → episode → promote
   compose.py               # Layer-2 projection
-  seal.py / hydrate.py     # .mxp + ranking
+  seal.py / hydrate.py     # .kxp + ranking
   acl.py                   # Inv-Scope 404
   hooks/normalize.py       # Cursor/Claude → ObservationType
 ```
