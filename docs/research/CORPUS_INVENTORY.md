@@ -35,6 +35,8 @@ What we *can* and *did* do:
 |-----------------|---------|
 | `IMPLEMENTATION_FROM_LITERATURE.md` | Cross-pillar algorithms, SQL, constants for Phase A–E |
 | `impl/P1…P6_*.md` | Capture, cognify, anchors, compose, hydrate, privacy/seal |
+| `impl/P5_HYDRATE_RETRIEVE.md` | **26 FULL** — ranking formula, drop order, pack budgets, associative expand |
+| `impl/P6_PRIVACY_SEAL.md` | **22 FULL** — seal pipeline, Inv-Scope middleware, share redaction |
 | `AGENT_MEMORY_CORPUS_DEEP_READ.md` | Graphiti/Zep, HippoRAG×2, A-MEM, Nemori, Mem0, MemGPT, GenAgents, RecMem, ES-Mem, EM-LLM, StateFuse, TOKI, LightRAG, GraphRAG, SSGM, surveys |
 | `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md` | MemoryOS, LightMem, MAGMA, Memory-R1, ConfAIde, Fides, LoCoMo, MemoryAgentBench, AriGraph, Reflexion, Voyager skills, Collaborative Memory extras |
 | `SHAREABLE_ANCHOR_POLICY_RESEARCH.md` | MemClaw, AgentLeak, MAMA, MemLeak, PRISM, Collaborative Memory, VAULT, Miller/Spritely, ADR/QOC |
@@ -110,12 +112,13 @@ What we *can* and *did* do:
 |----|-------|------|------|
 | 2606.24535 | MemClaw / Governed Shared Memory | 2026 | SHAREABLE |
 | 2602.11510 | AgentLeak | 2026 | SHAREABLE |
-| ACL'26 | MAMA topology leakage | 2026 | SHAREABLE |
+| ACL'26 / 2512.04668 | MAMA / Topology Matters | 2025–26 | SHAREABLE + P6 |
 | 2606.29788 | MemLeak | 2026 | SHAREABLE |
 | 2605.10614 | PRISM | 2026 | SHAREABLE |
 | 2505.18279 | Collaborative Memory | 2025 | SHAREABLE + BATCH2 extras |
-| 2310.17884 | ConfAIde (contextual integrity) | 2023 | AGENT_MEMORY_BATCH2 |
-| 2505.23643 | Fides IFC | 2025 | AGENT_MEMORY_BATCH2 (was abstract-only in SHAREABLE) |
+| 2310.17884 | ConfAIde (contextual integrity) | 2023 | AGENT_MEMORY_BATCH2 + P6 |
+| 2505.23643 | Fides IFC | 2025 | AGENT_MEMORY_BATCH2 + P6 (PDF FULL) |
+| 2503.18813 | CaMeL | 2025 | P6 |
 | — | VAULT (eKNOW 2025) | 2025 | SHAREABLE |
 | — | Capability Myths Demolished | 2003 | SHAREABLE |
 | — | Spritely / OcapPub | 2023+ | SHAREABLE |
@@ -125,14 +128,54 @@ What we *can* and *did* do:
 
 | Source | Depth | Memo |
 |--------|-------|------|
-| C2SP age.md | Full | SEALED_PACK |
-| libsodium seal/box/sign | Full | SEALED_PACK |
-| Magic Wormhole protocols | Full | SEALED_PACK |
-| MLS RFC 9420 / 9750 | Substantial | SEALED_PACK |
-| Biscuits DESIGN+spec | Full | SEALED_PACK |
-| Macaroons NDSS 2014 | Substantial | SEALED_PACK |
+| C2SP age.md | Full | SEALED_PACK + P6 |
+| libsodium seal/box/sign | Full | SEALED_PACK + P6 |
+| Magic Wormhole protocols | Full | SEALED_PACK + P6 |
+| MLS RFC 9420 / 9750 | Substantial / FULL sections | SEALED_PACK + P6 |
+| Biscuits DESIGN+spec | Full | SEALED_PACK + P6 |
+| Macaroons NDSS 2014 | Full PDF | SEALED_PACK + P6 |
 | Claude Code hooks docs | Full | PARALLEL |
 | Cursor hooks docs | Full | PARALLEL |
+
+### P5 hydrate / retrieve / pack (2026-08-08 FULL)
+
+| ID | Paper | Year | Memo |
+|----|-------|------|------|
+| 2401.18059 | RAPTOR | 2024 | P5 |
+| 2504.18070 | PropRAG | 2025 | P5 |
+| 2403.14403 | Adaptive-RAG | 2024 | P5 |
+| 2310.11511 | Self-RAG | 2023 | P5 |
+| 2305.06983 | FLARE / Active RAG | 2023 | P5 |
+| 2510.10397 | AssoMem | 2025 | P5 |
+| 2508.04903 | RCR-Router | 2025 | P5 |
+| 2307.03172 | Lost in the Middle | 2023 | P5 |
+| 2310.05736 | LLMLingua | 2023 | P5 |
+| 2310.06201 | Compressing Context (Selective Context) | 2023 | P5 |
+| 2310.04408 | RECOMP | 2023 | P5 |
+| 2312.03414 | Compressed Context Memory | 2023 | P5 |
+| 2101.06804 | What Makes Good In-Context Examples (KATE) | 2021 | P5 |
+| 2402.03367 | RAG-Fusion | 2024 | P5 |
+| 2406.14550 | GraphReader | 2024 | P5 |
+| 2410.10813 | LongMemEval | 2024 | P5 |
+| 2507.05257 | MemoryAgentBench | 2025 | P5 |
+| 2402.17753 | LoCoMo | 2024 | P5 |
+| 2601.06966 | RealMem | 2026 | P5 |
+
+*(HippoRAG×2, LightRAG, GraphRAG, GenAgents, MemGPT, A-MEM also FULL-re-read for hydrate algorithms — counted in P5 honesty table.)*
+
+### P6 privacy / seal additions (2026-08-08 FULL)
+
+| ID / Source | Paper | Year | Memo |
+|-------------|-------|------|------|
+| 2512.04668 | Topology Matters (MAMA) | 2025 | P6 |
+| 2310.17884 | ConfAIde | 2023 | P6 |
+| 2503.18813 | CaMeL | 2025 | P6 |
+| 2505.23643 | Fides IFC | 2025 | P6 |
+| 2309.04697 | SSE Leakage-Abuse Attacks | 2023 | P6 |
+| 2510.06719 | DP Synthetic Text for RAG | 2025 | P6 |
+| 2605.27825 | MRMMIA | 2026 | P6 |
+| SQLCipher | Encrypted SQLite design | — | P6 |
+| RFC 2693 | SPKI (re-confirmed FULL) | 1999 | P6 |
 
 ---
 
@@ -185,23 +228,24 @@ These appear repeatedly across surveys and are **queued** for future FULL passes
 | MemAgent | Multi-conv RL memory agent | stub |
 | Omni memory | Personalized long-horizon self-evolving | stub |
 | Agent KB | Cross-domain experience store | stub |
-| AssoMem | Multi-signal associative retrieval | stub |
+| AssoMem | Multi-signal associative retrieval | **FULL → P5** |
 | Memento | Agent adaptation without LLM finetune | stub |
 | HyperGraphRAG | Hypergraph knowledge representation | stub |
 | Cognee | Queryable graph embeddings library | stub |
 | OpenMemory / MemMachine / Memary | Graph memory toolkits | stub |
-| LongMemEval / MemoryArena / MemBench / RealMem | Evaluation suites (LoCoMo/MAB done) | stub |
+| LongMemEval / RealMem | Eval suites | **FULL → P5** (MemoryArena still stub; MemBench in ledger) |
 | RETRO / Memorizing Transformers / RMT | Neural parametric memory lineage | stub |
 | Memory Networks / NTM / DNC | Classical differentiable memory | stub |
 | ReAct | Trajectory-as-short-horizon-memory | stub |
 | FLEX | Semantic gating for trajectory merge | stub |
-| CaMeL (2503.18813) | Prompt-injection defense by design (Dual-LLM lineage) | stub — next privacy pass |
+| CaMeL (2503.18813) | Prompt-injection defense by design | **FULL → P6** |
+| RAPTOR / PropRAG / Adaptive-RAG / FLARE / RCR-Router / Lost-in-Middle / packing suite | Hydrate/pack | **FULL → P5** |
 | … | See bibliographies of 2512.13564, 2603.07670, 2602.05665 for the long tail | |
 
 **Next FULL-read batches (priority for engineering-memory product):**
-1. CaMeL (2503.18813) + remaining MemClaw-cited leakage papers not yet FULL
-2. HyperGraphRAG + RAPTOR + MemoryBank forgetting-curve details
-3. LongMemEval primary paper + MemoryArena / MemBench / RealMem
+1. Remaining MemClaw-cited leakage papers not yet FULL
+2. HyperGraphRAG + MemoryBank forgetting-curve details
+3. MemoryArena (remaining eval)
 4. MemAgent / MEM1 / Memento (RL / self-evolving controllers)
 5. High-citation write/read/forget systems still stubbed in 2512.13564 bibliography
 
@@ -224,5 +268,6 @@ When expanding this corpus:
 | Date | Change |
 |------|--------|
 | 2026-08-08 | Initial honest inventory after first multi-cluster deep-read pass. |
+| 2026-08-08 | P5+P6 implementation pass: +26 P5 FULL, +22 P6 FULL (48 combined); added `impl/P5_HYDRATE_RETRIEVE.md`, `impl/P6_PRIVACY_SEAL.md`. |
 | 2026-08-08 | Batch 2: +11 FULL deep-reads (MemoryOS, LightMem, MAGMA, Memory-R1, ConfAIde, Fides, LoCoMo, MemoryAgentBench, AriGraph, Reflexion, Voyager) + Collaborative Memory extras; memo `AGENT_MEMORY_CORPUS_DEEP_READ_BATCH2.md`. Fides upgraded from abstract-only. |
 | 2026-08-08 | Pillar impl pass: `IMPLEMENTATION_FROM_LITERATURE.md` + P1–P6 recipes; ~783 arXiv seed IDs inventoried; MemoryOS/MIRIX/MemOS mechanisms encoded as constants/SQL/pseudocode. |
