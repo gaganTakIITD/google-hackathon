@@ -1596,3 +1596,4 @@ When architecture decisions change:
 | 2026-08-08 | Privacy/access lock: capability-gated handoffs, non-discoverability defaults, sealed `.mxp` packs, reject markdown as canonical storage, private user store layout, grant/revoke CLI, phase plan reordered for sealed handoff. |
 | 2026-08-08 | Added §9A detailed runtime walkthrough: how L0–L4 and the temporal Anchor graph operate together on write, cognify, compact, and hydrate paths. |
 | 2026-08-08 | Locked exact v1 record schemas in `docs/MEMORY_SCHEMAS_V1.md` (Observation→Capability, HandoffPack, `.mxp`, budgets, invariants). |
+| 2026-08-08 | Locked workstream identity resolver + Anchor promotion signal catalog in `docs/WORKSTREAM_AND_PROMOTION_V1.md` (research-informed). |
