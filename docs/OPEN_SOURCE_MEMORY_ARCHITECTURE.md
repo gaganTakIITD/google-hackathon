@@ -645,6 +645,323 @@ No Neo4j required for v1.
 
 ---
 
+## 9A. How memory actually works (detailed runtime)
+
+This section explains the adopted model as one system: **layers are the pipeline; the graph is the meaning structure; Anchors are what survive.**
+
+### 9A.1 One-picture model
+
+```text
+HOOK EVENT
+   │
+   ▼
+┌────────────── L0 RAW BUFFER ──────────────┐
+│ append-only observations (ephemeral)      │
+└───────┬───────────────────────┬───────────┘
+        │ state delta?          │ judgment?
+        ▼                       ▼
+   L1 WORKING NODE         L3 ANCHOR CANDIDATE
+   (per workstream)        (not committed yet)
+        │                       │
+        └──────────┬────────────┘
+                   │ boundary? (stop/compact/idle/handoff)
+                   ▼
+            COGNIFY PASS
+                   │
+       ┌───────────┼────────────┐
+       ▼           ▼            ▼
+  L2 EPISODE   GRAPH LINKS   L3 ANCHORS
+  (chapter)    (edges)       (active/superseded)
+                   │
+                   ▼
+            L4 HANDOFF PACK (.mxp sealed)
+                   │
+                   ▼
+            AUTHORIZED HYDRATE
+```
+
+Important:
+
+- Layers are **not five separate databases fighting each other**
+- They are stages/projections over one graph-backed store
+- L0 is sensor tape
+- L1 is live mission cursor
+- L2 is chapter history
+- L3 is durable judgment graph
+- L4 is the portable sealed projection for the next consumer
+
+### 9A.2 What each layer is doing in practice
+
+#### L0 — Raw Observation Buffer (sensor tape)
+
+**Writes when:** every hook event (prompt, edit, tool, stop, etc.)  
+**Form:** append-only event records  
+**Lifetime:** continuous, automatic  
+**Lifetime:** short (ring buffer by size/time)  
+**Shared?** no  
+
+Example events:
+
+```text
+t1 user_prompt: "auth keeps failing with CSRF on cookies"
+t2 file_edit: auth/session.ts
+t3 tool_call: run tests
+t4 agent_response: "cookie sessions are brittle here..."
+t5 user_prompt: "ok reject cookie sessions, use JWT"
+t6 stop
+```
+
+L0 alone is not memory. It is evidence material.
+
+#### L1 — Working State (live mission brain)
+
+**Writes when:** state actually changes  
+**Form:** one mutable WorkingNode per workstream  
+**Keeps only:**
+
+- current goal
+- last user ask
+- files in flight
+- blockers / open questions
+- active branch
+
+After t5 above, L1 might be:
+
+```text
+workstream: auth-refactor
+goal: replace cookie sessions with JWT
+last_user_ask: reject cookie sessions, use JWT
+files_in_flight: [auth/session.ts, auth/middleware.ts]
+open_questions: [refresh-token rotation]
+branch: feat/auth
+```
+
+L1 is tiny on purpose. It answers “what is true right now?”
+
+#### L2 — Episode Digest (chapter memory)
+
+**Writes when:** boundary hits (stop / compact / idle / handoff / workstream switch)  
+**Form:** EpisodeNode + links  
+**Job:** compress a span of L0+L1 into durable chapter meaning
+
+Episode example:
+
+```text
+Episode e12
+summary: Moved auth away from cookie sessions toward JWT
+files: auth/session.ts, auth/middleware.ts
+failed_approaches: cookie sessions (CSRF brittleness)
+next_steps: implement refresh-token rotation
+time_range: t1..t6
+```
+
+After episode write, old L0 rows for that span can be pruned.  
+Meaning remains in Episode + Anchors.
+
+#### L3 — Anchors (durable judgment graph)
+
+**Writes when:**
+
+- explicit `modex remember ...`, or
+- strong judgment signals promoted during cognify, or
+- reflection finds repeated pattern across episodes
+
+From the example, cognify creates:
+
+```text
+Anchor A1 kind=rejection
+statement: Do not use cookie sessions for auth
+reason: CSRF brittleness / failing tests
+about: [Library:cookies, File:auth/session.ts]
+status: active
+
+Anchor A2 kind=decision
+statement: Use JWT access tokens for auth sessions
+reason: more reliable for current API surface
+about: [File:auth/session.ts, File:auth/middleware.ts]
+status: active
+
+Anchor A3 kind=next_step
+statement: Implement refresh-token rotation next
+status: active
+workstream: auth-refactor
+```
+
+These are the compact-native survivors.
+
+#### L4 — Handoff surface (sealed projection)
+
+**Writes when:** after cognify / explicit handoff  
+**Form:** sealed `.mxp` compiled from:
+
+1. ranked active Anchors (first)
+2. L1 working snapshot
+3. latest episode digest(s)
+4. relation pointers (parent/parallel handoffs)
+
+L4 is not a second brain. It is the boot image.
+
+### 9A.3 Where the graph sits
+
+The graph is the connective tissue across L1–L4 (and refs into L0):
+
+```text
+[Episode e12]
+   MENTIONS → File:auth/session.ts
+   MENTIONS → File:auth/middleware.ts
+   DERIVES  → Anchor A1 (reject cookies)
+   DERIVES  → Anchor A2 (use JWT)
+   DERIVES  → Anchor A3 (next: refresh rotation)
+   NEXT_IN  → (previous episode e11)
+
+[Anchor A1]
+   ABOUT → File:auth/session.ts
+   ABOUT → Library:cookies
+   SUPPORTS ← Evidence snip "CSRF failures in tests"
+   LINKED_TO → Anchor A2
+   IN_WORKSTREAM → Workstream:auth-refactor
+
+[Anchor A2]
+   ABOUT → File:auth/session.ts
+   SUPERSEDES → (older decision "use cookie sessions", now invalid)
+   IN_WORKSTREAM → Workstream:auth-refactor
+
+[WorkingNode auth-refactor]
+   points at current goal/files/open questions
+
+[Handoff h77]
+   COMPILED_INTO ← A1,A2,A3, WorkingNode, Episode e12
+   CONTINUES → h76
+```
+
+So when someone asks “why JWT?”, retrieval is not keyword hope over chat.  
+It is graph neighborhood around `auth/session.ts` / auth workstream.
+
+### 9A.4 Exact write path (one event → memory)
+
+Take event t5: user says reject cookies, use JWT.
+
+```text
+1) INGEST
+   redact secrets
+   append to L0 as observation o55
+
+2) ROUTE
+   detect state delta → update L1 goal/next/files
+   detect judgment language → create Anchor candidates:
+     reject cookie sessions
+     decide JWT
+
+3) (no boundary yet)
+   candidates may stay pending if promotion=conservative
+   or auto-commit if explicit/strong and promotion=normal
+
+4) BOUNDARY (session stop)
+   cognify(span):
+     create Episode e12
+     upsert entities File:auth/session.ts, Library:cookies, ...
+     commit Anchors A1/A2/A3 with provenance episode=e12, obs=o55
+     link MENTIONS / DERIVES / ABOUT / LINKED_TO
+     if old cookie-session decision exists:
+        mark old invalid + SUPERSEDES edge
+     refresh WorkingNode
+     compile sealed Handoff h77 from anchors-first budget
+     prune L0 span t1..t6 (keep ObservationRefs as needed)
+```
+
+### 9A.5 Exact read path (hydrate / continue)
+
+Authorized principal starts next session on same workstream:
+
+```text
+1) resolve workstream = auth-refactor
+2) authorize capability
+3) open sealed handoff HEAD (h77) + active anchor store slice
+4) rank under budget:
+     constraints/rejects/decisions → goal/next_step → latest episode → evidence
+5) inject structured memory into agent context
+6) agent starts warm:
+     knows cookies rejected, JWT chosen, refresh rotation next, hot files
+```
+
+If another agent is on `billing-tax` in parallel:
+
+- different WorkingNode
+- different Episode stream
+- different Handoff HEAD
+- may still see repo-global shareable constraints only if permitted
+- cannot read `auth-refactor` sealed packs without capability
+
+### 9A.6 How compaction pressure is handled
+
+There are two “compacts”:
+
+1. **Model/context compact** (IDE/agent window pressure)  
+2. **Store compact** (our cognify/prune)
+
+Our law for both:
+
+```text
+externalize Anchors first
+then compress chapters into Episodes
+then drop raw L0
+never depend on a prose summary as sole memory
+```
+
+Under extreme budget, hydrate may include only:
+
+```text
+A1 rejection (cookies)
+A2 decision (JWT)
+A3 next_step (refresh rotation)
+L1 goal + hot files
+```
+
+and still be useful. That is why Anchors are compact-native.
+
+### 9A.7 How layers and graph divide responsibility
+
+| Concern | Owner |
+|---------|--------|
+| Capture everything cheaply | L0 |
+| Know current mission | L1 WorkingNode |
+| Remember what a chapter meant | L2 EpisodeNode |
+| Remember durable judgments | L3 AnchorNodes + temporal edges |
+| Package continuity for next consumer | L4 HandoffNode/pack |
+| Explain relationships / why | Graph edges |
+| Survive compact | Anchors first |
+| Stay private | sealed L4 + ACL on workstream |
+
+### 9A.8 What we explicitly did *not* adopt as core
+
+- Flat vector DB of chat chunks as the brain  
+- Markdown files as canonical memory  
+- One giant summary blob per repo  
+- Promoting every prompt into durable graph nodes  
+- Requiring Neo4j on day one  
+
+We adopted:
+
+> **Layered pipeline + temporal Anchor graph + sealed handoff projection.**
+
+### 9A.9 Minimal success trace (should be demonstrable)
+
+```text
+Session A:
+  reject Mongo/cookies/... as Anchor
+  decide alternative as Anchor
+  stop → episode + sealed handoff
+
+Session B (authorized, same workstream):
+  hydrate
+  agent does not re-propose rejected approach
+  agent continues next_step with hot files known
+```
+
+If this trace fails, the memory architecture is not working — regardless of UI.
+
+---
+
 ## 10. LOCKED HANDOFF ARCHITECTURE (next primary goal)
 
 ### 10.1 Handoff is bigger than cold start
@@ -1274,3 +1591,4 @@ When architecture decisions change:
 |------|--------|
 | 2026-08-08 | Initial synthesis from architecture/design conversation: problem framing, hooks+CLI lock, Anchor store lock, memory graph orchestration, handoff/workstream model, phased plan. |
 | 2026-08-08 | Privacy/access lock: capability-gated handoffs, non-discoverability defaults, sealed `.mxp` packs, reject markdown as canonical storage, private user store layout, grant/revoke CLI, phase plan reordered for sealed handoff. |
+| 2026-08-08 | Added §9A detailed runtime walkthrough: how L0–L4 and the temporal Anchor graph operate together on write, cognify, compact, and hydrate paths. |
